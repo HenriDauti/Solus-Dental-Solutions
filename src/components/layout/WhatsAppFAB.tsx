@@ -1,9 +1,9 @@
 "use client"
 
 import { MessageCircle } from "lucide-react"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { translations } from "@/src/data/translations"
-import { generateWhatsAppLink } from "@/src/utils/whatsapp"
+import { useLanguage } from "@/context/LanguageContext"
+import { translations } from "@/data/translations"
+import { generateWhatsAppLink } from "@/utils/whatsapp"
 
 export default function WhatsAppFAB() {
   const { language } = useLanguage()

@@ -2,8 +2,8 @@
 
 import { Crown, Shield, Zap, Smile } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { translations } from "@/src/data/translations"
+import { useLanguage } from "@/context/LanguageContext"
+import { translations } from "@/data/translations"
 
 const serviceIcons = {
   protetike: Crown,

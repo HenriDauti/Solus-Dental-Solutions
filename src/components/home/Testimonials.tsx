@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react"
 import { useState, useEffect } from "react"
-import { useLanguage } from "@/src/context/LanguageContext"
+import { useLanguage } from "@/context/LanguageContext"
 
 interface Testimonial {
   name: string

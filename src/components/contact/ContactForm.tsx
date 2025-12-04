@@ -2,10 +2,10 @@
 
 import type React from "react"
 import { useState } from "react"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { translations } from "@/src/data/translations"
-import { validateForm } from "@/src/utils/validation"
-import { generateWhatsAppLink, formatWhatsAppMessage } from "@/src/utils/whatsapp"
+import { useLanguage } from "@/context/LanguageContext"
+import { translations } from "@/data/translations"
+import { validateForm } from "@/utils/validation"
+import { generateWhatsAppLink, formatWhatsAppMessage } from "@/utils/whatsapp"
 
 export default function ContactForm() {
   const { language } = useLanguage()

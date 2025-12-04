@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { Menu, X } from "lucide-react"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { translations } from "@/src/data/translations"
-import { generateWhatsAppLink } from "@/src/utils/whatsapp"
+import { useLanguage } from "@/context/LanguageContext"
+import { translations } from "@/data/translations"
+import { generateWhatsAppLink } from "@/utils/whatsapp"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -36,8 +36,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">S</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-900 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">S</span>
             </div>
             <span className="hidden sm:inline font-bold text-primary text-lg">Solus Dental</span>
           </Link>
@@ -49,8 +49,8 @@ export default function Navbar() {
                 to={link.path}
                 className={`text-sm font-medium transition-colors ${
                   isActive(link.path)
-                    ? "text-primary border-b-2 border-primary pb-1"
-                    : "text-foreground hover:text-primary"
+                    ? "text-purple-600 border-b-2 border-purple-600 pb-1"
+                    : "text-foreground hover:text-purple-600"
                 }`}
               >
                 {link.label}
@@ -63,7 +63,7 @@ export default function Navbar() {
               <button
                 onClick={() => setLanguage("al")}
                 className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                  language === "al" ? "bg-primary text-primary-foreground" : "text-foreground hover:text-primary"
+                  language === "al" ? "bg-gradient-to-r from-blue-900 to-purple-600 text-white" : "text-foreground hover:text-purple-600"
                 }`}
               >
                 AL
@@ -71,7 +71,7 @@ export default function Navbar() {
               <button
                 onClick={() => setLanguage("en")}
                 className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                  language === "en" ? "bg-primary text-primary-foreground" : "text-foreground hover:text-primary"
+                  language === "en" ? "bg-gradient-to-r from-blue-900 to-purple-600 text-white" : "text-foreground hover:text-purple-600"
                 }`}
               >
                 EN
@@ -82,7 +82,7 @@ export default function Navbar() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-opacity-90 transition-all transform hover:scale-105"
+              className="hidden md:inline-block px-4 py-2 bg-gradient-to-r from-blue-900 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
               aria-label={t.nav.bookNow}
             >
               {t.nav.bookNow}
@@ -106,7 +106,7 @@ export default function Navbar() {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={`block px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isActive(link.path) ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                  isActive(link.path) ? "bg-gradient-to-r from-blue-900 to-purple-600 text-white" : "text-foreground hover:bg-muted"
                 }`}
               >
                 {link.label}
@@ -116,7 +116,7 @@ export default function Navbar() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium text-center hover:bg-opacity-90 transition-all"
+              className="block px-4 py-2 bg-gradient-to-r from-blue-900 to-purple-600 text-white rounded-lg font-medium text-center hover:shadow-lg transition-all"
             >
               {t.nav.bookNow}
             </a>

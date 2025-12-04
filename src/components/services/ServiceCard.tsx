@@ -1,8 +1,6 @@
-"use client"
-
 import { CheckCircle } from "lucide-react"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { generateWhatsAppLink } from "@/src/utils/whatsapp"
+import { useLanguage } from "@/context/LanguageContext"
+import { generateWhatsAppLink } from "@/utils/whatsapp"
 
 interface ServiceCardProps {
   title: string

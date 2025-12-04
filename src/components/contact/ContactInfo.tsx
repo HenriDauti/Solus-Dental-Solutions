@@ -1,8 +1,8 @@
 "use client"
 
 import { Phone, Mail, MapPin } from "lucide-react"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { translations } from "@/src/data/translations"
+import { useLanguage } from "@/context/LanguageContext"
+import { translations } from "@/data/translations"
 
 export default function ContactInfo() {
   const { language } = useLanguage()

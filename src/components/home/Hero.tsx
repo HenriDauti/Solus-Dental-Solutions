@@ -2,9 +2,9 @@
 
 import { ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useLanguage } from "@/src/context/LanguageContext"
-import { translations } from "@/src/data/translations"
-import { generateWhatsAppLink } from "@/src/utils/whatsapp"
+import { useLanguage } from "@/context/LanguageContext"
+import { translations } from "@/data/translations"
+import { generateWhatsAppLink } from "@/utils/whatsapp"
 
 export default function Hero() {
   const { language } = useLanguage()
@@ -18,7 +18,7 @@ export default function Hero() {
   )
 
   return (
-    <div className="pb-12 md:pb-20 px-4 bg-gradient-to-br from-white to-muted">
+    <div className="pb-12 md:pb-20 px-4 bg-gradient-to-br from-white via-purple-50 to-blue-50">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
         <div className="space-y-6 animate-slideUp">
           <div>
@@ -31,7 +31,7 @@ export default function Hero() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105"
+              className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-900 to-purple-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105"
               aria-label={t.hero.bookCta}
             >
               {t.hero.bookCta}
@@ -39,7 +39,7 @@ export default function Hero() {
             </a>
             <Link
               to="/services"
-              className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-all"
+              className="inline-flex items-center justify-center px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-all"
             >
               {t.hero.servicesCta}
             </Link>
