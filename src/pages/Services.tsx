@@ -7,8 +7,16 @@ const Services: React.FC = () => {
   const { language, t } = useLanguage();
   const services = servicesData[language];
 
+  const serviceImages = [
+  '/dental therapy.png',  // General Dentistry
+  '/crown.jpg',           // Cosmetic
+  '/braces.jpg',          // Orthodontics
+  '/implants.jpg'         // Implants
+];
+  
+
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         {/* Animated Background */}
@@ -20,12 +28,6 @@ const Services: React.FC = () => {
 
         <div className="container-custom relative">
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            <div className="inline-block">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong text-sm font-medium text-accent animate-fade-in">
-                <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                {t('services.title')}
-              </span>
-            </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text animate-fade-in-up">
               {language === "sq"
@@ -55,63 +57,17 @@ const Services: React.FC = () => {
                 {/* Gradient Glow Effect */}
                 <div className="absolute -inset-0.5 gradient-blue-purple rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500" />
                 
-                {/* Service Image */}
-                <div className="relative h-64 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-primary/20 group-hover:scale-110 transition-transform duration-700" />
-                  
-                  {/* Icon Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 border border-white/20">
-                      {/* Dynamic Service Icon */}
-                      <svg
-                        className="w-12 h-12 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        {index === 0 && (
-                          // General Dentistry - Tooth with checkmark
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        )}
-                        {index === 1 && (
-                          // Cosmetic - Sparkles/Stars
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-                          />
-                        )}
-                        {index === 2 && (
-                          // Orthodontics - Align/Straighten
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16M4 18h16"
-                          />
-                        )}
-                        {index === 3 && (
-                          // Implants - Wrench/Tool (precision work)
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                          />
-                        )}
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-                </div>
+    {/* Service Image */}
+<div className="relative h-64 overflow-hidden rounded-t-xl">
+  <img
+    src={serviceImages[index]}
+    alt={service.title}
+    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+  />
+  
+  {/* Gradient Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+</div>
 
                 {/* Content */}
                 <div className="relative p-8 space-y-6">
