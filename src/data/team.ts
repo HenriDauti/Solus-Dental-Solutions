@@ -1,5 +1,5 @@
 export const teamData = {
-  al: [
+  sq: [
     {
       name: "Dr. Alban META",
       title: "DDS, Kirurg Dentar",

@@ -1,5 +1,5 @@
 export const faqData = {
-  al: [
+ sq: [
     {
       category: "E përgjithshme",
       questions: [

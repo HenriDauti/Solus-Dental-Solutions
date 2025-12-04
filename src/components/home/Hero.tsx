@@ -31,13 +31,7 @@ const Hero: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="space-y-8 animate-fade-in-up">
-            {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full animate-scale-in">
-              <Star className="w-4 h-4 text-accent fill-accent" />
-              <span className="text-sm font-medium gradient-text">
-                {t('hero.badge')}
-              </span>
-            </div>
+         
 
             {/* Hero Title with Gradient */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight animate-fade-in-up stagger-1">
@@ -136,10 +130,10 @@ const Hero: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-sm font-medium text-muted-foreground">
-                      {t('hero.badge.certification')}
+                   {t('hero.certification.label')}
                     </div>
                     <div className="text-lg font-bold gradient-text">
-                      {t('hero.badge.quality')}
+                      {t('hero.certification.quality')}
                     </div>
                   </div>
                 </div>

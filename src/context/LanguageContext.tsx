@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { translations } from '@/data/translations';
 
-type Language = 'al' | 'en';
+type Language = 'sq' | 'en';
 
 interface LanguageContextType {
   language: Language;
@@ -12,7 +12,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('al');
+  const [language, setLanguage] = useState<Language>('sq');
 
   // Translation function that supports nested keys like 'nav.home'
   const t = (key: string): string => {

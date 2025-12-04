@@ -5,18 +5,6 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle newsletter subscription
-    setSubscribed(true);
-    setTimeout(() => {
-      setSubscribed(false);
-      setEmail('');
-    }, 3000);
-  };
 
   const footerLinks = {
     services: [
@@ -47,7 +35,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-br from-deep-navy via-primary to-accent text-white overflow-hidden">
+  <footer className="relative bg-gradient-to-br from-primary via-primary to-accent text-white overflow-hidden">
       {/* Decorative Wave Divider */}
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-none rotate-180">
         <svg
@@ -76,58 +64,18 @@ const Footer: React.FC = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <svg
-                  className="w-7 h-7 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div className="text-2xl font-bold">Solus Dental</div>
-                <div className="text-sm text-white/70">{t('tagline')}</div>
-              </div>
-            </div>
+            <Link to="/" className="inline-block">
+              <img
+                src="/logo.png"
+                alt="Solus Dental Solution"
+                className="h-16 w-auto object-contain"
+              />
+            </Link>
 
             <p className="text-white/80 leading-relaxed">
               {t('footer.description')}
             </p>
 
-            {/* Newsletter */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">{t('footer.newsletter.title')}</h4>
-              <form onSubmit={handleSubscribe} className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={t('footer.newsletter.placeholder')}
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white text-primary rounded-md hover:scale-110 transition-transform duration-300"
-                  aria-label="Subscribe"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
-              {subscribed && (
-                <p className="text-sm text-green-300 animate-fade-in">
-                  {t('footer.newsletter.success')}
-                </p>
-              )}
-            </div>
           </div>
 
           {/* Services */}

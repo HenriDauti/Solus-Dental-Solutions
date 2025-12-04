@@ -1,42 +1,29 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
 
 interface ServiceCardProps {
-  icon: LucideIcon;
   title: string;
   description: string;
-  features?: string[];
-  delay?: number;
+  details: string;
+  benefits: string[];
+  duration: string;
+  image: string;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
-  icon: Icon,
   title,
   description,
-  features = [],
-  delay = 0,
+  details,
+  benefits,
+  duration,
+  image,
 }) => {
   return (
-    <div
-      className="group relative card-glass card-premium card-shine card-hover animate-fade-in-up"
-      style={{ animationDelay: `${delay}ms` }}
-    >
+    <div className="group relative card-glass card-premium card-shine card-hover animate-fade-in-up">
       {/* Gradient Glow on Hover */}
       <div className="absolute -inset-0.5 gradient-blue-purple rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500" />
       
       <div className="relative p-8 space-y-6">
-        {/* Icon Container with Gradient Background */}
-        <div className="relative">
-          {/* Pulsing Glow Background */}
-          <div className="absolute inset-0 gradient-accent rounded-2xl blur-xl opacity-50 group-hover:opacity-75 animate-pulse-glow" />
-          
-          {/* Icon Circle */}
-          <div className="relative w-16 h-16 gradient-blue-purple rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500 animate-float">
-            <Icon className="w-8 h-8 text-white" strokeWidth={2} />
-          </div>
-        </div>
-
-        {/* Content */}
+        {/* Service Header */}
         <div className="space-y-3">
           <h3 className="text-2xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
             {title}
@@ -47,10 +34,17 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           </p>
         </div>
 
-        {/* Features List */}
-        {features.length > 0 && (
-          <ul className="space-y-2 pt-4 border-t border-border/50">
-            {features.map((feature, index) => (
+        {/* Details */}
+        <div className="pt-4 border-t border-border/50">
+          <p className="text-foreground leading-relaxed">
+            {details}
+          </p>
+        </div>
+
+        {/* Benefits List */}
+        {benefits.length > 0 && (
+          <ul className="space-y-2 pt-4">
+            {benefits.map((benefit, index) => (
               <li
                 key={index}
                 className="flex items-start gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300"
@@ -68,30 +62,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                <span>{feature}</span>
+                <span>{benefit}</span>
               </li>
             ))}
           </ul>
         )}
 
-        {/* Learn More Link */}
-        <div className="pt-4">
-          <button className="group/btn flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all duration-300">
-            <span>Learn More</span>
-            <svg
-              className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+        {/* Duration Badge */}
+        <div className="pt-4 flex items-center gap-2">
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-sm font-medium text-muted-foreground">
+            {duration}
+          </span>
         </div>
       </div>
 

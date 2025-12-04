@@ -1,5 +1,5 @@
 export const servicesData = {
-  al: [
+  sq: [
     {
       id: "protetike",
       name: "Protetike",

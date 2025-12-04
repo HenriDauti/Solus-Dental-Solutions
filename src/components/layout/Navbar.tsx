@@ -42,41 +42,16 @@ const Navbar: React.FC = () => {
       >
         <div className="container-custom">
           <div className="flex items-center justify-between">
-            {/* Logo with Gradient */}
+            {/* Logo */}
             <Link
               to="/"
-              className="group flex items-center gap-3 transition-all duration-300 hover:scale-105"
+              className="group flex items-center transition-all duration-300 hover:scale-105"
             >
-              <div className="relative">
-                {/* Gradient Background Circle */}
-                <div className="absolute inset-0 gradient-blue-purple rounded-full blur-lg opacity-50 group-hover:opacity-70 transition-opacity duration-300" />
-                
-                {/* Logo Container */}
-                <div className="relative w-12 h-12 rounded-full gradient-blue-purple flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <svg
-                    className="w-7 h-7 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              
-              <div>
-                <span className="text-xl font-bold gradient-text block leading-tight">
-                  Solus Dental
-                </span>
-                <span className="text-xs text-muted-foreground font-medium">
-                  {t('tagline')}
-                </span>
-              </div>
+              <img
+                src="/logo.png"
+                alt="Solus Dental Solution"
+                className="h-12 w-auto object-contain"
+              />
             </Link>
 
             {/* Desktop Navigation */}
