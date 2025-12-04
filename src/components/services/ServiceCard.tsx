@@ -1,65 +1,104 @@
-import { CheckCircle } from "lucide-react"
-import { useLanguage } from "@/context/LanguageContext"
-import { generateWhatsAppLink } from "@/utils/whatsapp"
+import React from 'react';
+import { LucideIcon } from 'lucide-react';
 
 interface ServiceCardProps {
-  title: string
-  description: string
-  details: string
-  benefits: string[]
-  duration: string
-  image: string
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  features?: string[];
+  delay?: number;
 }
 
-export default function ServiceCard({ title, description, details, benefits, duration, image }: ServiceCardProps) {
-  const { language } = useLanguage()
-
-  const bookText = language === "al" ? "Rezervo këtë shërbim" : "Book This Service"
-  const durationLabel = language === "al" ? "Kohëzgjatja:" : "Duration:"
-  const benefitsLabel = language === "al" ? "Përfitimet:" : "Benefits:"
-  const bookButtonText = language === "al" ? "Rezervo Sot" : "Book Today"
-
-  const whatsappLink = generateWhatsAppLink(
-    "+355697707078",
-    language === "al" ? `Dëshiroj të rezervoj shërbimin: ${title}` : `I would like to book the service: ${title}`,
-  )
-
+const ServiceCard: React.FC<ServiceCardProps> = ({
+  icon: Icon,
+  title,
+  description,
+  features = [],
+  delay = 0,
+}) => {
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
-      <img src={`/generic-placeholder-300px.png?height=300&width=600`} alt={title} className="w-full h-72 object-cover" />
-      <div className="p-8">
-        <h3 className="text-2xl font-bold text-primary mb-4">{title}</h3>
-        <p className="text-foreground opacity-75 mb-4">{description}</p>
-        <p className="text-foreground mb-6">{details}</p>
-
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div>
-            <p className="text-sm font-semibold text-primary mb-2">{durationLabel}</p>
-            <p className="text-foreground">{duration}</p>
+    <div
+      className="group relative card-glass card-premium card-shine card-hover animate-fade-in-up"
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {/* Gradient Glow on Hover */}
+      <div className="absolute -inset-0.5 gradient-blue-purple rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500" />
+      
+      <div className="relative p-8 space-y-6">
+        {/* Icon Container with Gradient Background */}
+        <div className="relative">
+          {/* Pulsing Glow Background */}
+          <div className="absolute inset-0 gradient-accent rounded-2xl blur-xl opacity-50 group-hover:opacity-75 animate-pulse-glow" />
+          
+          {/* Icon Circle */}
+          <div className="relative w-16 h-16 gradient-blue-purple rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500 animate-float">
+            <Icon className="w-8 h-8 text-white" strokeWidth={2} />
           </div>
         </div>
 
-        <div className="mb-6">
-          <p className="text-sm font-semibold text-primary mb-3">{benefitsLabel}</p>
-          <ul className="space-y-2">
-            {benefits.map((benefit, index) => (
-              <li key={index} className="flex items-center gap-2 text-sm text-foreground">
-                <CheckCircle size={16} className="text-primary flex-shrink-0" />
-                {benefit}
+        {/* Content */}
+        <div className="space-y-3">
+          <h3 className="text-2xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
+            {title}
+          </h3>
+          
+          <p className="text-muted-foreground leading-relaxed">
+            {description}
+          </p>
+        </div>
+
+        {/* Features List */}
+        {features.length > 0 && (
+          <ul className="space-y-2 pt-4 border-t border-border/50">
+            {features.map((feature, index) => (
+              <li
+                key={index}
+                className="flex items-start gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300"
+              >
+                <svg
+                  className="w-5 h-5 text-accent flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span>{feature}</span>
               </li>
             ))}
           </ul>
-        </div>
+        )}
 
-        <a
-          href={whatsappLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full inline-block text-center px-4 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105"
-        >
-          {bookButtonText}
-        </a>
+        {/* Learn More Link */}
+        <div className="pt-4">
+          <button className="group/btn flex items-center gap-2 text-accent font-medium hover:gap-3 transition-all duration-300">
+            <span>Learn More</span>
+            <svg
+              className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
+
+      {/* Corner Decoration */}
+      <div className="absolute top-4 right-4 w-20 h-20 gradient-accent rounded-full blur-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
     </div>
-  )
-}
+  );
+};
+
+export default ServiceCard;

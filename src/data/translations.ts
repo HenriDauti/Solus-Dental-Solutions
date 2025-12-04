@@ -60,7 +60,6 @@ export const translations = {
       saturday: "e shtunë",
       sunday: "e diel",
       monToFri: "9:00 - 19:00",
-      saturday: "9:00 - 16:00",
       closed: "Mbyllur",
     },
     whatsapp: {
@@ -130,7 +129,6 @@ export const translations = {
       saturday: "Saturday",
       sunday: "Sunday",
       monToFri: "9:00 AM - 7:00 PM",
-      saturday: "9:00 AM - 4:00 PM",
       closed: "Closed",
     },
     whatsapp: {

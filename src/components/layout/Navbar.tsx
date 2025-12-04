@@ -1,128 +1,251 @@
-"use client"
+import React, { useState, useEffect } from 'react';
+import { Menu, X } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { Link, useLocation } from 'react-router-dom';
 
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { Menu, X } from "lucide-react"
-import { useLanguage } from "@/context/LanguageContext"
-import { translations } from "@/data/translations"
-import { generateWhatsAppLink } from "@/utils/whatsapp"
+const Navbar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+  const location = useLocation();
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { language, setLanguage } = useLanguage()
-  const location = useLocation()
-  const t = translations[language]
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const navLinks = [
-    { path: "/", label: t.nav.home },
-    { path: "/services", label: t.nav.services },
-    { path: "/team", label: t.nav.team },
-    { path: "/gallery", label: t.nav.gallery },
-    { path: "/contact", label: t.nav.contact },
-    { path: "/faq", label: t.nav.faq },
-  ]
+  const navigation = [
+    { name: t('nav.home'), href: '/' },
+    { name: t('nav.services'), href: '/services' },
+    { name: t('nav.about'), href: '/about' },
+    { name: t('nav.gallery'), href: '/gallery' },
+    { name: t('nav.contact'), href: '/contact' },
+  ];
 
-  const isActive = (path: string) => location.pathname === path
-
-  const whatsappLink = generateWhatsAppLink(
-    "+355697707078",
-    language === "al"
-      ? "Përshëndetje! Dëshiroj të rezervoj një takim në Solus Dental Solution."
-      : "Hello! I would like to book an appointment at Solus Dental Solution.",
-  )
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-900 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">S</span>
-            </div>
-            <span className="hidden sm:inline font-bold text-primary text-lg">Solus Dental</span>
-          </Link>
-
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(link.path)
-                    ? "text-purple-600 border-b-2 border-purple-600 pb-1"
-                    : "text-foreground hover:text-purple-600"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center border border-border rounded-lg p-1 bg-muted">
-              <button
-                onClick={() => setLanguage("al")}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                  language === "al" ? "bg-gradient-to-r from-blue-900 to-purple-600 text-white" : "text-foreground hover:text-purple-600"
-                }`}
-              >
-                AL
-              </button>
-              <button
-                onClick={() => setLanguage("en")}
-                className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                  language === "en" ? "bg-gradient-to-r from-blue-900 to-purple-600 text-white" : "text-foreground hover:text-purple-600"
-                }`}
-              >
-                EN
-              </button>
-            </div>
-
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:inline-block px-4 py-2 bg-gradient-to-r from-blue-900 to-purple-600 text-white rounded-lg font-medium hover:shadow-lg transition-all transform hover:scale-105"
-              aria-label={t.nav.bookNow}
+    <>
+      {/* Floating Navbar */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled
+            ? 'glass-strong py-3 shadow-xl'
+            : 'glass py-4 shadow-sm'
+        }`}
+        style={{
+          transform: isScrolled ? 'translateY(0)' : 'translateY(0)',
+        }}
+      >
+        <div className="container-custom">
+          <div className="flex items-center justify-between">
+            {/* Logo with Gradient */}
+            <Link
+              to="/"
+              className="group flex items-center gap-3 transition-all duration-300 hover:scale-105"
             >
-              {t.nav.bookNow}
-            </a>
+              <div className="relative">
+                {/* Gradient Background Circle */}
+                <div className="absolute inset-0 gradient-blue-purple rounded-full blur-lg opacity-50 group-hover:opacity-70 transition-opacity duration-300" />
+                
+                {/* Logo Container */}
+                <div className="relative w-12 h-12 rounded-full gradient-blue-purple flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  <svg
+                    className="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              
+              <div>
+                <span className="text-xl font-bold gradient-text block leading-tight">
+                  Solus Dental
+                </span>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {t('tagline')}
+                </span>
+              </div>
+            </Link>
 
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-8">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="relative group py-2 transition-colors duration-300"
+                >
+                  <span
+                    className={`font-medium transition-colors duration-300 ${
+                      isActive(item.href)
+                        ? 'text-accent'
+                        : 'text-foreground hover:text-accent'
+                    }`}
+                  >
+                    {item.name}
+                  </span>
+                  
+                  {/* Gradient Underline */}
+                  <span
+                    className={`absolute bottom-0 left-0 h-0.5 gradient-blue-purple transition-all duration-300 ${
+                      isActive(item.href)
+                        ? 'w-full'
+                        : 'w-0 group-hover:w-full'
+                    }`}
+                  />
+                </Link>
+              ))}
+            </div>
+
+            {/* Right Side Actions */}
+            <div className="flex items-center gap-4">
+              {/* Language Switcher with Pill Design */}
+              <div className="hidden md:flex items-center gap-1 p-1 rounded-full glass-strong">
+                <button
+                  onClick={() => setLanguage('sq')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    language === 'sq'
+                      ? 'gradient-blue-purple text-white shadow-md'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  SQ
+                </button>
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    language === 'en'
+                      ? 'gradient-blue-purple text-white shadow-md'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  EN
+                </button>
+              </div>
+
+              {/* Book Now Button */}
+              <a
+                href={`https://wa.me/355692057575?text=${encodeURIComponent(t('whatsapp.message'))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:flex btn btn-primary animate-pulse-glow"
+              >
+                {t('nav.bookNow')}
+              </a>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="lg:hidden p-2 rounded-lg hover:bg-accent/10 transition-colors duration-300"
+                aria-label="Toggle menu"
+              >
+                {isOpen ? (
+                  <X className="w-6 h-6 text-foreground" />
+                ) : (
+                  <Menu className="w-6 h-6 text-foreground" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
+      </nav>
 
-        {isOpen && (
-          <div className="md:hidden border-t border-border py-4 space-y-2 animate-slideUp">
-            {navLinks.map((link) => (
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-40 lg:hidden transition-all duration-500 ${
+          isOpen
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 glass-dark backdrop-blur-xl"
+          onClick={() => setIsOpen(false)}
+        />
+
+        {/* Menu Content */}
+        <div
+          className={`absolute top-20 left-4 right-4 glass-strong rounded-2xl shadow-2xl overflow-hidden transition-all duration-500 ${
+            isOpen ? 'translate-y-0 opacity-100' : '-translate-y-10 opacity-0'
+          }`}
+        >
+          <div className="p-6 space-y-4">
+            {navigation.map((item, index) => (
               <Link
-                key={link.path}
-                to={link.path}
+                key={item.name}
+                to={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`block px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isActive(link.path) ? "bg-gradient-to-r from-blue-900 to-purple-600 text-white" : "text-foreground hover:bg-muted"
+                className={`block py-3 px-4 rounded-lg font-medium transition-all duration-300 animate-fade-in-up stagger-${index + 1} ${
+                  isActive(item.href)
+                    ? 'gradient-blue-purple text-white shadow-md'
+                    : 'text-foreground hover:bg-accent/10'
                 }`}
               >
-                {link.label}
+                {item.name}
               </Link>
             ))}
+
+            {/* Mobile Language Switcher */}
+            <div className="flex items-center gap-2 pt-4 border-t border-border">
+              <button
+                onClick={() => {
+                  setLanguage('sq');
+                  setIsOpen(false);
+                }}
+                className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  language === 'sq'
+                    ? 'gradient-blue-purple text-white shadow-md'
+                    : 'bg-muted text-muted-foreground hover:bg-accent/10'
+                }`}
+              >
+                Shqip
+              </button>
+              <button
+                onClick={() => {
+                  setLanguage('en');
+                  setIsOpen(false);
+                }}
+                className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                  language === 'en'
+                    ? 'gradient-blue-purple text-white shadow-md'
+                    : 'bg-muted text-muted-foreground hover:bg-accent/10'
+                }`}
+              >
+                English
+              </button>
+            </div>
+
+            {/* Mobile Book Now */}
             <a
-              href={whatsappLink}
+              href={`https://wa.me/355692057575?text=${encodeURIComponent(t('whatsapp.message'))}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="block px-4 py-2 bg-gradient-to-r from-blue-900 to-purple-600 text-white rounded-lg font-medium text-center hover:shadow-lg transition-all"
+              className="block btn btn-primary w-full text-center animate-pulse-glow"
+              onClick={() => setIsOpen(false)}
             >
-              {t.nav.bookNow}
+              {t('nav.bookNow')}
             </a>
           </div>
-        )}
+        </div>
       </div>
-    </nav>
-  )
-}
+
+      {/* Spacer to prevent content jump */}
+      <div className="h-20" />
+    </>
+  );
+};
+
+export default Navbar;
