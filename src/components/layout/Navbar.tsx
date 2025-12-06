@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  SQ
+                  AL
                 </button>
                 <button
                   onClick={() => setLanguage('en')}
