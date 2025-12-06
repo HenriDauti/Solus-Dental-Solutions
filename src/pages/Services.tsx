@@ -106,28 +106,10 @@ const Services: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Bottom Section */}
-                  <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                    {/* Duration */}
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Clock className="w-4 h-4 text-accent" />
-                      <span className="font-medium">{service.duration}</span>
-                    </div>
-
-                    {/* CTA Button */}
-                    <a
-                      href={`https://wa.me/355692057575?text=${encodeURIComponent(
-                        language === "sq"
-                          ? `Përshëndetje! Dëshiroj të rezervoj një takim për: ${service.title}`
-                          : `Hello! I would like to book an appointment for: ${service.title}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:text-accent/80 transition-colors duration-300 group/cta"
-                    >
-                      <span>{language === "sq" ? "Rezervo" : "Book Now"}</span>
-                      <ArrowRight className="w-4 h-4 group-hover/cta:translate-x-1 transition-transform duration-300" />
-                    </a>
+                  {/* Duration */}
+                  <div className="flex items-center gap-2 pt-4 border-t border-border/50 text-sm text-muted-foreground">
+                    <Clock className="w-4 h-4 text-accent" />
+                    <span className="font-medium">{service.duration}</span>
                   </div>
                 </div>
 
@@ -153,16 +135,16 @@ const Services: React.FC = () => {
             
             <p className="text-lg text-muted-foreground">
               {language === "sq"
-                ? "Rezervoni një konsultë falas sot dhe zbuloni se si mund t'ju ndihmojmë"
-                : "Book a free consultation today and discover how we can help you"}
+                ? "Rezervoni një konsultë sot dhe zbuloni se si mund t'ju ndihmojmë"
+                : "Book a consultation today and discover how we can help you"}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
               <a
                 href={`https://wa.me/355692057575?text=${encodeURIComponent(
                   language === "sq"
-                    ? "Përshëndetje! Dëshiroj të rezervoj një konsultë falas."
-                    : "Hello! I would like to book a free consultation."
+                    ? "Përshëndetje! Dëshiroj të rezervoj një konsultë."
+                    : "Hello! I would like to book a consultation."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

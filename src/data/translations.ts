@@ -2,7 +2,7 @@ export const translations = {
   sq: {
     tagline: "Buzëqeshja juaj, pasioni ynë",
     nav: {
-      home: "Ballina",
+      home: "Kryefaqja",
       services: "Shërbime",
       about: "Rreth Nesh",
       team: "Ekipi",
