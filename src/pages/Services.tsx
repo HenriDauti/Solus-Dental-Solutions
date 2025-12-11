@@ -8,11 +8,12 @@ const Services: React.FC = () => {
   const services = servicesData[language];
 
   const serviceImages = [
-  '/dental therapy.png',  // General Dentistry
-  '/crown.jpg',           // Cosmetic
-  '/braces.jpg',          // Orthodontics
-  '/implants.jpg'         // Implants
-];
+    '/crown.jpg',              // Protetike - Crowns
+    '/dental therapy.png',     // Terapi - Dental Therapy
+    '/implants.jpg',           // Kirurgji - Surgery/Implants
+    '/cosmetic.jpg',           // Estetike - Cosmetic
+    '/braces.jpg'              // Ortodonci - Orthodontics
+  ];
   
 
   return (
@@ -57,17 +58,17 @@ const Services: React.FC = () => {
                 {/* Gradient Glow Effect */}
                 <div className="absolute -inset-0.5 gradient-blue-purple rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500" />
                 
-    {/* Service Image */}
-<div className="relative h-64 overflow-hidden rounded-t-xl">
-  <img
-    src={serviceImages[index]}
-    alt={service.title}
-    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-  />
-  
-  {/* Gradient Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-</div>
+                {/* Service Image */}
+                <div className="relative h-64 overflow-hidden rounded-t-xl">
+                  <img
+                    src={serviceImages[index]}
+                    alt={service.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                  
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                </div>
 
                 {/* Content */}
                 <div className="relative p-8 space-y-6">

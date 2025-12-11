@@ -1,34 +1,36 @@
 export const galleryImages = [
+  // Clinic Photos (6 photos)
   {
     id: "clinic-1",
-    url: "/modern-dental-clinic-reception-area.jpg",
-    alt: "Reception area",
+    url: "/photo%201.jpeg",
+    alt: "Solus Dental Solution - Photo 1",
   },
   {
     id: "clinic-2",
-    url: "/dental-treatment-room-with-modern-equipment.jpg",
-    alt: "Treatment room",
+    url: "/photo%202.jpeg",
+    alt: "Solus Dental Solution - Photo 2",
   },
   {
     id: "clinic-3",
-    url: "/dental-x-ray-equipment-and-technology.jpg",
-    alt: "X-ray equipment",
+    url: "/photo%203.jpeg",
+    alt: "Solus Dental Solution - Photo 3",
   },
   {
     id: "clinic-4",
-    url: "/waiting-room-in-modern-dental-clinic.jpg",
-    alt: "Waiting area",
+    url: "/photo%204.jpeg",
+    alt: "Solus Dental Solution - Photo 4",
   },
   {
     id: "clinic-5",
-    url: "/sterilization-and-surgical-instruments-dental.jpg",
-    alt: "Sterilization area",
+    url: "/photo%205.jpeg",
+    alt: "Solus Dental Solution - Photo 5",
   },
   {
     id: "clinic-6",
-    url: "/dental-lab-with-equipment-and-instruments.jpg",
-    alt: "Laboratory",
+    url: "/photo%206.jpeg",
+    alt: "Solus Dental Solution - Photo 6",
   },
+  
   {
     id: "before-1",
     url: "/before-dental-treatment-smile-improvement.jpg",

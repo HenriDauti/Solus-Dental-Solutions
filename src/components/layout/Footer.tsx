@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="inline-block">
               <img
-                src="/logo.png"
+                src="/solus%20Inverted%20Color.png"
                 alt="Solus Dental Solution"
                 className="h-16 w-auto object-contain"
               />
@@ -128,7 +128,7 @@ const Footer: React.FC = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-white/70 flex-shrink-0 mt-1" />
                 <span className="text-white/80">
-                  Rruga Ramazan Kasa, Tirana, Albania
+                  Rruga Ramazan Kasa, Tiranë
                 </span>
               </li>
               <li className="flex items-center gap-3">

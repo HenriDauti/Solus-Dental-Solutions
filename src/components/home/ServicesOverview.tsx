@@ -1,29 +1,32 @@
 "use client"
 
-import { Crown, Activity, Drill, Smile, ArrowRight } from "lucide-react"
+import { Crown, Activity, Scissors, Sparkles, Smile, ArrowRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useLanguage } from "@/context/LanguageContext"
 import { translations } from "@/data/translations"
 
 const serviceIcons = {
-  protetike: Crown,      // Crowns, bridges, veneers
-  terapi: Activity,      // Dental therapy, treatments, root canals
-  implant: Drill,        // Dental implants, surgical procedures
-  ortodonci: Smile,      // Orthodontics, braces, aligners
+  protetike: Crown,        // Crowns, bridges, veneers
+  terapi: Activity,        // Dental therapy, treatments, root canals
+  kirurgji: Scissors,      // Dental surgery, extractions, implants
+  estetike: Sparkles,      // Cosmetic dentistry, whitening, veneers
+  ortodonci: Smile,        // Orthodontics, braces, aligners
 }
 
 // Service-specific gradient colors
 const serviceColors = {
   protetike: "from-amber-500/20 via-yellow-500/20 to-amber-500/20",
   terapi: "from-blue-500/20 via-cyan-500/20 to-blue-500/20",
-  implant: "from-purple-500/20 via-fuchsia-500/20 to-purple-500/20",
+  kirurgji: "from-red-500/20 via-rose-500/20 to-red-500/20",
+  estetike: "from-pink-500/20 via-purple-500/20 to-pink-500/20",
   ortodonci: "from-emerald-500/20 via-teal-500/20 to-emerald-500/20",
 }
 
 const serviceAccents = {
   protetike: "group-hover:shadow-amber-500/20",
   terapi: "group-hover:shadow-blue-500/20",
-  implant: "group-hover:shadow-purple-500/20",
+  kirurgji: "group-hover:shadow-red-500/20",
+  estetike: "group-hover:shadow-pink-500/20",
   ortodonci: "group-hover:shadow-emerald-500/20",
 }
 
@@ -45,10 +48,16 @@ export default function ServicesOverview() {
       desc: t.services.terapi.desc,
     },
     {
-      key: "implant",
-      icon: serviceIcons.implant,
-      name: t.services.implant.name,
-      desc: t.services.implant.desc,
+      key: "kirurgji",
+      icon: serviceIcons.kirurgji,
+      name: t.services.kirurgji.name,
+      desc: t.services.kirurgji.desc,
+    },
+    {
+      key: "estetike",
+      icon: serviceIcons.estetike,
+      name: t.services.estetike.name,
+      desc: t.services.estetike.desc,
     },
     {
       key: "ortodonci",
@@ -78,20 +87,22 @@ export default function ServicesOverview() {
           
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in-up animation-delay-200">
             {language === "sq"
-              ? "Nga kurorë dhe implantet tek ortodonci, ofrojmë shërbime dentare të plota me teknologjinë më të fundit"
-              : "From crowns and implants to orthodontics, we offer complete dental services with the latest technology"}
+              ? "Nga kurorë dhe kirurgji tek ortodonci dhe estetikë, ofrojmë shërbime dentare të plota me teknologjinë më të fundit"
+              : "From crowns and surgery to orthodontics and aesthetics, we offer complete dental services with the latest technology"}
           </p>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* Services Grid - 5 items in responsive layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
           {services.map((service, index) => {
             const Icon = service.icon
             return (
               <Link
                 key={service.key}
                 to="/services"
-                className={`group relative card-glass card-hover overflow-hidden animate-fade-in-up`}
+                className={`group relative card-glass card-hover overflow-hidden animate-fade-in-up ${
+                  index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
+                }`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Gradient Background */}

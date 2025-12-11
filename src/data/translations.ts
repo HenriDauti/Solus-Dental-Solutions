@@ -44,9 +44,13 @@ export const translations = {
         name: "Terapi Dentare",
         desc: "Plotësime, trajtime kanali rrënjë, pastrimi dhe trajtim preventiv",
       },
-      implant: {
-        name: "Implant Dentar",
-        desc: "Implantet dentare me sukses të lartë dhe zgjatje të gjatë",
+      kirurgji: {
+        name: "Kirurgji Dentare",
+        desc: "Ekstraktime, implantime dhe trajtim kirurgjik me teknika të avancuara",
+      },
+      estetike: {
+        name: "Stomatologji Estetike",
+        desc: "Zbardhje profesionale, veneers dhe trajtim estetik për buzëqeshje të përsosur",
       },
       ortodonci: {
         name: "Ortodonci",
@@ -188,9 +192,13 @@ export const translations = {
         name: "Dental Therapy",
         desc: "Fillings, root canals, professional cleaning and preventive care",
       },
-      implant: {
-        name: "Dental Implants",
-        desc: "Dental implants with high success rate and long-term durability",
+      kirurgji: {
+        name: "Dental Surgery",
+        desc: "Extractions, implantations and surgical treatment with advanced techniques",
+      },
+      estetike: {
+        name: "Cosmetic Dentistry",
+        desc: "Professional whitening, veneers and aesthetic treatment for perfect smiles",
       },
       ortodonci: {
         name: "Orthodontics",
