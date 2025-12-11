@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
 
               {/* Book Now Button */}
               <a
-                href={`https://wa.me/355692057575?text=${encodeURIComponent(t('whatsapp.message'))}`}
+                href={`https://wa.me/355697707078?text=${encodeURIComponent(t('whatsapp.message'))}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden md:flex btn btn-primary animate-pulse-glow"
@@ -205,7 +205,7 @@ const Navbar: React.FC = () => {
 
             {/* Mobile Book Now */}
             <a
-              href={`https://wa.me/355692057575?text=${encodeURIComponent(t('whatsapp.message'))}`}
+              href={`https://wa.me/355697707078?text=${encodeURIComponent(t('whatsapp.message'))}`}
               target="_blank"
               rel="noopener noreferrer"
               className="block btn btn-primary w-full text-center animate-pulse-glow"

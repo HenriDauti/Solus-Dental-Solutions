@@ -128,25 +128,25 @@ const Footer: React.FC = () => {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-white/70 flex-shrink-0 mt-1" />
                 <span className="text-white/80">
-                  Rruga Bardhok Biba, Tirana, Albania
+                  Rruga Ramazan Kasa, Tirana, Albania
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-white/70 flex-shrink-0" />
                 <a
-                  href="tel:+355692057575"
+                  href="tel:+355697707078"
                   className="text-white/80 hover:text-white transition-colors duration-300"
                 >
-                  +355 69 205 7575
+                  +355 69 770 7078
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-white/70 flex-shrink-0" />
                 <a
-                  href="mailto:info@solusdental.al"
+                  href="mailto:solusdentalsolution@gmail.com"
                   className="text-white/80 hover:text-white transition-colors duration-300"
                 >
-                  info@solusdental.al
+                  solusdentalsolution@gmail.com
                 </a>
               </li>
             </ul>

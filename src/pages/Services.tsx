@@ -141,7 +141,7 @@ const Services: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
               <a
-                href={`https://wa.me/355692057575?text=${encodeURIComponent(
+                href={`https://wa.me/355697707078?text=${encodeURIComponent(
                   language === "sq"
                     ? "Përshëndetje! Dëshiroj të rezervoj një konsultë."
                     : "Hello! I would like to book a consultation."

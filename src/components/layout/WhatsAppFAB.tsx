@@ -7,7 +7,7 @@ const WhatsAppFAB: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const whatsappNumber = '355692057575';
+  const whatsappNumber = '355697707078';
   const message = encodeURIComponent(t('whatsapp.message'));
 
   const handleClick = () => {

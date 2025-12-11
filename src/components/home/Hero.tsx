@@ -51,7 +51,7 @@ const Hero: React.FC = () => {
             {/* CTA Buttons with Magnetic Effect */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up stagger-3">
               <a
-                href={`https://wa.me/355692057575?text=${encodeURIComponent(t('whatsapp.message'))}`}
+                href={`https://wa.me/355697707078?text=${encodeURIComponent(t('whatsapp.message'))}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary group btn-magnetic"

@@ -5,7 +5,7 @@ export const faqData = {
       questions: [
         {
           q: "Ku ndodhet klinika juaj?",
-          a: "Solus Dental Solution ndodhet në 8RM6+GPM, Rruga Ramazan Kasa, Tiranë. Mund të na vizitoni në këtë adresë ose të na thërrisni për më shumë informacione.",
+          a: "Solus Dental Solution ndodhet në Rruga Ramazan Kasa, Tiranë. Mund të na vizitoni në këtë adresë ose të na thërrisni për më shumë informacione.",
         },
         {
           q: "Cilat janë oraret e punës?",
@@ -16,8 +16,8 @@ export const faqData = {
           a: "Mund të rezervoni një takim përmes portalit tonë online, duke na thirur në +355 69 770 7078, ose duke na kontaktuar përmes WhatsApp. Ne jemi të gatshëm t'u ndihmojë në zgjedhjen e përshtatshëm të orës për kërkesimet tuaja.",
         },
         {
-          q: "A pranoni raste emergjente?",
-          a: "Po, ne pranojmë raste emergjente. Nëse keni një urgjencë dentare, kontaktojeni amin sa më shpejt që të jetë e mundur në +355 69 770 7078 ose përmes WhatsApp-it.",
+          q: "A pranoni raste emergjence?",
+          a: "Po, ne pranojmë raste emergjence. Nëse keni një urgjencë dentare, kontaktojeni amin sa më shpejt që të jetë e mundur në +355 69 770 7078 ose përmes WhatsApp-it.",
         },
       ],
     },
@@ -83,7 +83,7 @@ export const faqData = {
       questions: [
         {
           q: "Where is your clinic located?",
-          a: "Solus Dental Solution is located at 8RM6+GPM, Rruga Ramazan Kasa, Tiranë. You can visit us at this address or call us for more information.",
+          a: "Solus Dental Solution is located at Rruga Ramazan Kasa, Tiranë. You can visit us at this address or call us for more information.",
         },
         {
           q: "What are your working hours?",
