@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import {  useLocation, BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { LanguageProvider } from "./context/LanguageContext"
 import Navbar from "./components/layout/Navbar"
 import Footer from "./components/layout/Footer"
@@ -10,11 +10,23 @@ import Gallery from "./pages/Gallery"
 import Contact from "./pages/Contact"
 import FAQ from "./pages/FAQ"
 import PageTransition from "./components/layout/PageTransition"
+import { useEffect } from 'react';
+
+function ScrollManager() {
+  const location = useLocation();
+  useEffect(() => {
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
+  return null;
+}
 
 export default function App() {
   return (
     <LanguageProvider>
       <Router>
+        <ScrollManager />
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-grow">

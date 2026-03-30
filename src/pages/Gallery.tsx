@@ -5,7 +5,7 @@ import { useLanguage } from "../context/LanguageContext"
 import { translations } from "../data/translations"
 import { galleryImages } from "../data/gallery"
 import ImageGrid from "../components/gallery/ImageGrid"
-import { Camera, Sparkles, Images } from "lucide-react"
+import { Camera, Sparkles } from "lucide-react"
 
 export default function Gallery() {
   const { language } = useLanguage()
@@ -113,42 +113,6 @@ export default function Gallery() {
             <ImageGrid images={activeTab === "clinic" ? clinicImages : resultImages} />
           </div>
 
-          {/* Stats Section */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-            <div className="glass-strong p-8 rounded-2xl text-center space-y-3 hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-4">
-                <Camera className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-4xl font-bold gradient-text">
-                {clinicImages.length}+
-              </div>
-              <p className="text-muted-foreground font-medium">
-                {language === "sq" ? "Foto të Klinikës" : "Clinic Photos"}
-              </p>
-            </div>
-
-            <div className="glass-strong p-8 rounded-2xl text-center space-y-3 hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-4xl font-bold gradient-text">
-                {resultImages.length}+
-              </div>
-              <p className="text-muted-foreground font-medium">
-                {language === "sq" ? "Raste të Suksesshme" : "Success Cases"}
-              </p>
-            </div>
-
-            <div className="glass-strong p-8 rounded-2xl text-center space-y-3 hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center mx-auto mb-4">
-                <Images className="w-8 h-8 text-white" />
-              </div>
-              <div className="text-4xl font-bold gradient-text">100%</div>
-              <p className="text-muted-foreground font-medium">
-                {language === "sq" ? "Kënaqësi e Pacientëve" : "Patient Satisfaction"}
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 

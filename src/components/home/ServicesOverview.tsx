@@ -87,16 +87,14 @@ export default function ServicesOverview() {
         </div>
 
         {/* Services Grid - 5 items in responsive layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {services.map((service, index) => {
             const Icon = service.icon
             return (
               <Link
                 key={service.key}
-                to="/services"
-                className={`group relative card-glass card-hover overflow-hidden animate-fade-in-up ${
-                  index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
-                }`}
+                to={`/services#${service.key}`}
+            className="group relative card-glass card-hover overflow-hidden animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Gradient Background */}

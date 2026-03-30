@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { servicesData } from '@/data/services';
-import { CheckCircle2, Clock, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Clock } from 'lucide-react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -10,26 +10,30 @@ const Services: React.FC = () => {
   const services = servicesData[language];
 
   const serviceImages = [
-    '/dental therapy.png',     // Terapi - Dental Therapy
-    '/implants.jpg',           // Kirurgji - Surgery/Implants
-    '/cosmetic.jpg',           // Estetike - Cosmetic
-    '/braces.jpg'              // Ortodonci - Orthodontics
+    '/crown.jpg',
+    '/dental therapy.png',
+    '/implants.jpg',
+    '/cosmetic.jpg',
+    '/braces.jpg'
   ];
-  const location = useLocation();
-  useEffect(() => {
-  if (location.hash) {
-    setTimeout(() => {
-      const el = document.getElementById(location.hash.slice(1));
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+const location = useLocation();
+
+useEffect(() => {
+  const hash = location.hash.slice(1);
+  if (hash) {
+    const el = document.getElementById(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  } else {
+    window.scrollTo(0, 0);
   }
-}, [location.hash]);
+}, [location]);
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
-        {/* Animated Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5" />
           <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float" />
@@ -38,7 +42,6 @@ const Services: React.FC = () => {
 
         <div className="container-custom relative">
           <div className="text-center max-w-3xl mx-auto space-y-6">
-            
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold gradient-text animate-fade-in-up">
               {language === "sq"
                 ? "Shërbime dentare të plota me teknologjinë më të fundit"
@@ -59,10 +62,10 @@ const Services: React.FC = () => {
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {services.map((service, index) => (
-             <div
-  key={index}
-  id={service.id}
-  className="group relative card-glass card-premium overflow-hidden animate-fade-in-up"
+              <div
+                key={index}
+                id={service.id}
+                className="group relative card-glass card-premium overflow-hidden animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Gradient Glow Effect */}
@@ -75,14 +78,11 @@ const Services: React.FC = () => {
                     alt={service.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  
-                  {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
                 </div>
 
                 {/* Content */}
                 <div className="relative p-8 space-y-6">
-                  {/* Title */}
                   <div>
                     <h3 className="text-2xl font-bold text-foreground group-hover:gradient-text transition-all duration-300 mb-3">
                       {service.title}
@@ -92,22 +92,16 @@ const Services: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Divider */}
                   <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
-                  {/* Details */}
                   <p className="text-foreground/80 leading-relaxed">
                     {service.details}
                   </p>
 
-                  {/* Benefits */}
                   {service.benefits && service.benefits.length > 0 && (
                     <div className="space-y-3">
                       {service.benefits.slice(0, 3).map((benefit, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-start gap-3 group/benefit"
-                        >
+                        <div key={idx} className="flex items-start gap-3 group/benefit">
                           <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5 group-hover/benefit:scale-110 transition-transform duration-300" />
                           <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                             {benefit}
@@ -117,14 +111,12 @@ const Services: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Duration */}
                   <div className="flex items-center gap-2 pt-4 border-t border-border/50 text-sm text-muted-foreground">
                     <Clock className="w-4 h-4 text-accent" />
                     <span className="font-medium">{service.duration}</span>
                   </div>
                 </div>
 
-                {/* Corner Decoration */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent/20 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             ))}
@@ -164,10 +156,7 @@ const Services: React.FC = () => {
                 {language === "sq" ? "Rezervo Konsultë" : "Book Consultation"}
               </a>
               
-              <a
-                href="/contact"
-                className="btn btn-secondary"
-              >
+              <a href="/contact" className="btn btn-secondary">
                 {language === "sq" ? "Na Kontaktoni" : "Contact Us"}
               </a>
             </div>
