@@ -2,19 +2,28 @@ import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { servicesData } from '@/data/services';
 import { CheckCircle2, Clock, ArrowRight } from 'lucide-react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const Services: React.FC = () => {
   const { language, t } = useLanguage();
   const services = servicesData[language];
 
   const serviceImages = [
-    '/crown.jpg',              // Protetike - Crowns
     '/dental therapy.png',     // Terapi - Dental Therapy
     '/implants.jpg',           // Kirurgji - Surgery/Implants
     '/cosmetic.jpg',           // Estetike - Cosmetic
     '/braces.jpg'              // Ortodonci - Orthodontics
   ];
-  
+  const location = useLocation();
+  useEffect(() => {
+  if (location.hash) {
+    setTimeout(() => {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+}, [location.hash]);
 
   return (
     <div className="min-h-screen">
@@ -50,9 +59,10 @@ const Services: React.FC = () => {
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {services.map((service, index) => (
-              <div
-                key={index}
-                className="group relative card-glass card-premium overflow-hidden animate-fade-in-up"
+             <div
+  key={index}
+  id={service.id}
+  className="group relative card-glass card-premium overflow-hidden animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Gradient Glow Effect */}

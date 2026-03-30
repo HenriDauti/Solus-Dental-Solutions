@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin, Twitter, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   const { t } = useLanguage();
 
-  const footerLinks = {
-    services: [
-      { name: t('footer.services.general'), href: '/services' },
-      { name: t('footer.services.cosmetic'), href: '/services' },
-      { name: t('footer.services.orthodontics'), href: '/services' },
-      { name: t('footer.services.implants'), href: '/services' },
-    ],
+const footerLinks = {
+  services: [
+    { name: t('footer.services.general'), href: '/services#terapi' },
+    { name: t('footer.services.cosmetic'), href: '/services#estetike' },
+    { name: t('footer.services.orthodontics'), href: '/services#ortodonci' },
+    { name: t('footer.services.implants'), href: '/services#kirurgji' },
+  ],
     company: [
       { name: t('footer.company.about'), href: '/about' },
       { name: t('footer.company.team'), href: '/about' },
-      { name: t('footer.company.careers'), href: '/contact' },
       { name: t('footer.company.contact'), href: '/contact' },
     ],
     resources: [
@@ -27,12 +26,10 @@ const Footer: React.FC = () => {
     ],
   };
 
-  const socialLinks = [
-    { icon: Facebook, href: 'https://facebook.com', label: 'Facebook', color: 'hover:text-blue-400' },
-    { icon: Instagram, href: 'https://instagram.com', label: 'Instagram', color: 'hover:text-pink-400' },
-    { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn', color: 'hover:text-blue-500' },
-    { icon: Twitter, href: 'https://twitter.com', label: 'Twitter', color: 'hover:text-sky-400' },
-  ];
+const socialLinks = [
+  { icon: Facebook, href: 'https://www.facebook.com/p/Solus-Dental-Solution-61568431454397/', label: 'Facebook', color: 'hover:text-blue-400' },
+  { icon: Instagram, href: 'https://www.instagram.com/solus.dental.solution/', label: 'Instagram', color: 'hover:text-pink-400' },
+];
 
   return (
   <footer className="relative bg-gradient-to-br from-primary via-primary to-accent text-white overflow-hidden">

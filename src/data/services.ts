@@ -1,24 +1,6 @@
 export const servicesData = {
   sq: [
     {
-      id: "protetike",
-      name: "Protetike",
-      title: "Proteza Dentare dhe Kuronë",
-      description:
-        "Protetika dentare është një fushë e nënspecializuar që merret me zëvendësimin e dhëmbëve të humbur dhe restaurimin e dëmtimeve. Në Solus Dental Solution, ne përdorim materialet më të mira dhe teknikat më moderne për të garantuar rezultate optimale.",
-      details:
-        "Ne ofrojmë një gamë të gjerë të shërbimeve protektike, duke përfshirë kuronë, ura, proteza të plota dhe të pjesshme, veneers porcelani dhe shumë më tepër. Çdo shërbim është i personalizuar sipas kërkesave individuale të pacientit.",
-      benefits: [
-        "Restaurim i dhëmbëve të humbur",
-        "Përmirësim i estetikës së buzëqeshjes",
-        "Restaurim i funksionit të gëlltitjes",
-        "Rritja e vetëbesimit personal",
-        "Përmirësimi i shëndetit të gojës",
-      ],
-      duration: "2-3 seanca",
-      image: "crown-prosthetics",
-    },
-    {
       id: "terapi",
       name: "Terapi Dentare",
       title: "Terapi dhe Pastrimi Dentar",
@@ -92,24 +74,6 @@ export const servicesData = {
     },
   ],
   en: [
-    {
-      id: "protetike",
-      name: "Prosthetics",
-      title: "Dental Prosthetics and Crowns",
-      description:
-        "Dental prosthetics is a specialized field that deals with replacing missing teeth and restoring damaged areas. At Solus Dental Solution, we use the best materials and modern techniques to guarantee optimal results.",
-      details:
-        "We offer a wide range of prosthetic services, including crowns, bridges, full and partial dentures, porcelain veneers, and much more. Each service is customized to meet the individual needs of the patient.",
-      benefits: [
-        "Restoration of missing teeth",
-        "Improvement of smile aesthetics",
-        "Restoration of chewing function",
-        "Increase in personal confidence",
-        "Improvement of oral health",
-      ],
-      duration: "2-3 sessions",
-      image: "crown-prosthetics",
-    },
     {
       id: "terapi",
       name: "Dental Therapy",

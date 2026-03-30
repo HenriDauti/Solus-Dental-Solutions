@@ -36,12 +36,6 @@ export default function ServicesOverview() {
 
   const services = [
     {
-      key: "protetike",
-      icon: serviceIcons.protetike,
-      name: t.services.protetike.name,
-      desc: t.services.protetike.desc,
-    },
-    {
       key: "terapi",
       icon: serviceIcons.terapi,
       name: t.services.terapi.name,
