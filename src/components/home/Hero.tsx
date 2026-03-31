@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Star, Award, Users } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 const Hero: React.FC = () => {
@@ -31,8 +31,6 @@ const Hero: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="space-y-8 animate-fade-in-up">
-         
-
             {/* Hero Title with Gradient */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight animate-fade-in-up stagger-1">
               <span className="gradient-text block">
@@ -48,7 +46,7 @@ const Hero: React.FC = () => {
               {t('hero.description')}
             </p>
 
-            {/* CTA Buttons with Magnetic Effect */}
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up stagger-3">
               <a
                 href={`https://wa.me/355697707078?text=${encodeURIComponent(t('whatsapp.message'))}`}
@@ -59,33 +57,6 @@ const Hero: React.FC = () => {
                 {t('hero.cta.primary')}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
               </a>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="grid grid-cols-3 gap-6 pt-8 animate-fade-in-up stagger-4">
-              <div className="glass-strong p-4 rounded-xl text-center card-hover">
-                <div className="flex justify-center mb-2">
-                  <Users className="w-6 h-6 text-accent" />
-                </div>
-                <div className="text-2xl font-bold gradient-text">5000+</div>
-                <div className="text-sm text-muted-foreground">{t('hero.stats.patients')}</div>
-              </div>
-              
-              <div className="glass-strong p-4 rounded-xl text-center card-hover">
-                <div className="flex justify-center mb-2">
-                  <Award className="w-6 h-6 text-accent" />
-                </div>
-                <div className="text-2xl font-bold gradient-text">15+</div>
-                <div className="text-sm text-muted-foreground">{t('hero.stats.experience')}</div>
-              </div>
-              
-              <div className="glass-strong p-4 rounded-xl text-center card-hover">
-                <div className="flex justify-center mb-2">
-                  <Star className="w-6 h-6 text-accent fill-accent" />
-                </div>
-                <div className="text-2xl font-bold gradient-text">4.9</div>
-                <div className="text-sm text-muted-foreground">{t('hero.stats.rating')}</div>
-              </div>
             </div>
           </div>
 
@@ -106,29 +77,8 @@ const Hero: React.FC = () => {
                   alt="Modern Dental Clinic"
                   className="w-full h-auto object-cover"
                 />
-                
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
-              </div>
-              
-              {/* Floating Badge */}
-              <div className="absolute -bottom-6 -left-6 glass-strong p-6 rounded-2xl shadow-xl animate-float">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 gradient-blue-purple rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                      <path d="M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="white"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-muted-foreground">
-                   {t('hero.certification.label')}
-                    </div>
-                    <div className="text-lg font-bold gradient-text">
-                      {t('hero.certification.quality')}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
