@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react"
-import { Star, ChevronLeft, ChevronRight, Quote, RefreshCw } from "lucide-react"
+import React, { useState, useEffect, useCallback } from "react"
+import { Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink } from "lucide-react"
 import { useLanguage } from "@/context/LanguageContext"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -12,19 +12,31 @@ interface ApifyReview {
   publishAt?: string
   publishedAtDate?: string
   reviewerPhotoUrl?: string
+  reviewUrl?: string
 }
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const APIFY_TOKEN = (import.meta as any).env.VITE_APIFY_TOKEN as string
 const MAPS_URL =
   "https://www.google.com/maps/place/Solus+Dental+Solution/@41.3338403,19.8117894,17z/data=!3m1!4b1!4m6!3m5!1s0x135031005e7546d3:0xd7ceb5f39b9ae6!8m2!3d41.3338403!4d19.8117894!16s%2Fg%2F11y9_l7x7g"
-const CACHE_KEY = "solus_reviews_v2"
+const CACHE_KEY = "solus_reviews_v3"
 const CACHE_TTL = 24 * 60 * 60 * 1000
+const CARDS_PER_PAGE = 3
+const AUTOPLAY_MS = 5000
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function getStars(r: ApifyReview) { return r.stars ?? r.rating ?? 0 }
-function getText(r: ApifyReview) { return (r.textTranslated ?? r.text ?? "").trim() }
-function getDate(r: ApifyReview) { return r.publishAt ?? r.publishedAtDate }
+function getStars(r: ApifyReview) {
+  return r.stars ?? r.rating ?? 0
+}
+function getText(r: ApifyReview) {
+  return (r.textTranslated ?? r.text ?? "").trim()
+}
+function getDate(r: ApifyReview) {
+  return r.publishAt ?? r.publishedAtDate
+}
+function getReviewLink(r: ApifyReview) {
+  return r.reviewUrl ?? MAPS_URL
+}
 
 function timeAgo(dateStr: string | undefined, language: string): string {
   if (!dateStr) return ""
@@ -47,22 +59,156 @@ function timeAgo(dateStr: string | undefined, language: string): string {
 }
 
 function getInitials(name = "?") {
-  return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
 }
 
-// Gradient palette for avatars — cycles through a few combos
 const AVATAR_GRADIENTS = [
   "from-blue-500 to-indigo-600",
   "from-violet-500 to-purple-600",
   "from-cyan-500 to-blue-600",
   "from-indigo-500 to-blue-700",
   "from-purple-500 to-violet-700",
+  "from-sky-500 to-cyan-600",
+  "from-blue-600 to-violet-600",
 ]
 
-function renderStars(count: number) {
-  return Array.from({ length: 5 }, (_, i) => (
-    <Star key={i} className={`w-4 h-4 ${i < count ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
-  ))
+function StarRow({ count }: { count: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star
+          key={i}
+          className={`w-4 h-4 ${i < count ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+        />
+      ))}
+    </div>
+  )
+}
+
+function GoogleLogo() {
+  return (
+    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    </svg>
+  )
+}
+
+// ─── Card: review WITH text ───────────────────────────────────────────────────
+function TextReviewCard({ review, index }: { review: ApifyReview; index: number }) {
+  const { language } = useLanguage()
+  const stars = getStars(review)
+  const text = getText(review)
+  const gradient = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length]
+
+  return (
+    <a
+      href={getReviewLink(review)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col glass-strong rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer"
+    >
+      {/* Top accent bar */}
+      <div className={`h-1 w-full bg-gradient-to-r ${gradient} opacity-80`} />
+
+      <div className="flex flex-col flex-1 p-6 gap-4">
+        {/* Header: avatar + name + date */}
+        <div className="flex items-center gap-3">
+          <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
+            <span className="text-white text-sm font-bold tracking-wide">
+              {getInitials(review.name)}
+            </span>
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-foreground text-sm leading-tight truncate">
+              {review.name ?? "Patient"}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {timeAgo(getDate(review), language)}
+            </p>
+          </div>
+          <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-accent/70 transition-colors ml-auto flex-shrink-0" />
+        </div>
+
+        {/* Stars */}
+        <StarRow count={stars} />
+
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+        {/* Full review text — no truncation */}
+        <blockquote className="flex-1 text-sm text-foreground/80 leading-relaxed italic">
+          "{text}"
+        </blockquote>
+
+        {/* Google badge */}
+        <div className="flex items-center gap-1.5 pt-2 border-t border-border/50">
+          <GoogleLogo />
+          <span className="text-xs text-muted-foreground font-medium">Google Review</span>
+        </div>
+      </div>
+    </a>
+  )
+}
+
+// ─── Card: review WITHOUT text (compact, centered) ────────────────────────────
+function CompactReviewCard({ review, index }: { review: ApifyReview; index: number }) {
+  const { language } = useLanguage()
+  const stars = getStars(review)
+  const gradient = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length]
+
+  return (
+    <a
+      href={getReviewLink(review)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex flex-col items-center justify-center glass-strong rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer p-6 text-center relative"
+    >
+      {/* Soft gradient background glow */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl`} />
+
+      {/* Large avatar */}
+      <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg mb-4 group-hover:scale-105 transition-transform duration-300`}>
+        <span className="text-white text-xl font-bold tracking-wide">
+          {getInitials(review.name)}
+        </span>
+      </div>
+
+      {/* Name */}
+      <p className="font-semibold text-foreground text-base leading-tight mb-1">
+        {review.name ?? "Patient"}
+      </p>
+
+      {/* Date */}
+      <p className="text-xs text-muted-foreground mb-3">
+        {timeAgo(getDate(review), language)}
+      </p>
+
+      {/* Stars */}
+      <StarRow count={stars} />
+
+      {/* Stars label */}
+      <p className="text-xs text-muted-foreground mt-2 mb-4">
+        {stars === 5
+          ? language === "sq" ? "Vlerësim i shkëlqyer" : "Excellent rating"
+          : language === "sq" ? "Vlerësim i mirë" : "Great rating"}
+      </p>
+
+      {/* Google badge */}
+      <div className="flex items-center gap-1.5 mt-auto pt-3 border-t border-border/50 w-full justify-center">
+        <GoogleLogo />
+        <span className="text-xs text-muted-foreground font-medium">Google Review</span>
+        <ExternalLink className="w-3 h-3 text-muted-foreground/40 group-hover:text-accent/70 transition-colors" />
+      </div>
+    </a>
+  )
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -71,12 +217,14 @@ export default function GoogleReviews() {
   const [reviews, setReviews] = useState<ApifyReview[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [pageIndex, setPageIndex] = useState(0) // which "page" of 3 we're on
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
-  const autoPlayInterval = 5000
+  const [animKey, setAnimKey] = useState(0) // force re-mount for fade-in
 
-  // ─── Fetch ──────────────────────────────────────────────────────────────────
+  const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE)
+
+  // ─── Fetch ─────────────────────────────────────────────────────────────────
   const fetchReviews = async (force = false) => {
     if (!force) {
       try {
@@ -96,7 +244,6 @@ export default function GoogleReviews() {
     setError(null)
 
     try {
-      // Request 30 reviews so after filtering 4-5 stars we still have plenty
       const res = await fetch(
         `https://api.apify.com/v2/acts/compass~google-maps-reviews-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}&timeout=90`,
         {
@@ -104,7 +251,7 @@ export default function GoogleReviews() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             startUrls: [{ url: MAPS_URL }],
-            maxReviews: 30,          // fetch 30, filter down client-side
+            maxReviews: 30,
             reviewsSort: "newest",
             language: "en",
           }),
@@ -112,7 +259,6 @@ export default function GoogleReviews() {
       )
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
       const data: any[] = await res.json()
       let raw: ApifyReview[] = []
 
@@ -121,20 +267,15 @@ export default function GoogleReviews() {
 
       if (Array.isArray(first.reviews)) {
         raw = first.reviews
-      } else if ("text" in first || "stars" in first) {
-        raw = data
       } else {
         raw = data
       }
 
-      // Keep only: has text AND 4 or 5 stars, cap at 12
-      const filtered = raw
-        .filter((r) => getStars(r) >= 4 && getText(r).length > 0)
-        .slice(0, 12)
+      // Show ALL reviews (no text or star filter) – up to 30
+      const all = raw.slice(0, 30)
 
-      const ts = Date.now()
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ reviews: filtered, ts }))
-      setReviews(filtered)
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ reviews: all, ts: Date.now() }))
+      setReviews(all)
     } catch (err: any) {
       setError(err.message ?? "Unknown error")
     } finally {
@@ -144,23 +285,39 @@ export default function GoogleReviews() {
 
   useEffect(() => { fetchReviews() }, [])
 
-  // ─── Autoplay ───────────────────────────────────────────────────────────────
+  // ─── Navigation ────────────────────────────────────────────────────────────
+  const goTo = useCallback((page: number) => {
+    setPageIndex(page)
+    setProgress(0)
+    setAnimKey((k) => k + 1)
+  }, [])
+
+  const handleNext = useCallback(() => {
+    goTo((pageIndex + 1) % totalPages)
+  }, [pageIndex, totalPages, goTo])
+
+  const handlePrev = useCallback(() => {
+    goTo((pageIndex - 1 + totalPages) % totalPages)
+  }, [pageIndex, totalPages, goTo])
+
+  // ─── Autoplay ──────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (isPaused || reviews.length === 0) return
+    if (isPaused || reviews.length === 0 || totalPages <= 1) return
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          setActiveIndex((i) => (i + 1) % reviews.length)
+          handleNext()
           return 0
         }
-        return prev + (100 / (autoPlayInterval / 100))
+        return prev + (100 / (AUTOPLAY_MS / 100))
       })
     }, 100)
     return () => clearInterval(interval)
-  }, [isPaused, reviews.length])
+  }, [isPaused, reviews.length, totalPages, handleNext])
 
-  const handleNext = () => { setActiveIndex((i) => (i + 1) % reviews.length); setProgress(0) }
-  const handlePrev = () => { setActiveIndex((i) => (i - 1 + reviews.length) % reviews.length); setProgress(0) }
+  // ─── Visible slice ─────────────────────────────────────────────────────────
+  const startIdx = pageIndex * CARDS_PER_PAGE
+  const visibleReviews = reviews.slice(startIdx, startIdx + CARDS_PER_PAGE)
 
   return (
     <section className="section relative overflow-hidden">
@@ -172,6 +329,12 @@ export default function GoogleReviews() {
       <div className="container-custom relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong mb-6">
+            <GoogleLogo />
+            <span className="text-sm font-semibold text-foreground">
+              {language === "sq" ? "Vlerësime nga Google" : "Google Reviews"}
+            </span>
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="gradient-text">
               {language === "sq" ? "Çfarë Thonë Pacientët" : "What Our Patients Say"}
@@ -186,7 +349,7 @@ export default function GoogleReviews() {
 
         {/* Loading */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="w-14 h-14 rounded-full border-4 border-primary/20 border-t-accent animate-spin" />
             <p className="text-muted-foreground text-sm">
               {language === "sq" ? "Duke ngarkuar vlerësimet…" : "Loading reviews…"}
@@ -196,10 +359,16 @@ export default function GoogleReviews() {
 
         {/* Error */}
         {error && !loading && (
-          <div className="flex flex-col items-center gap-3 py-12">
-            <p className="text-muted-foreground text-sm">{language === "sq" ? "Nuk u ngarkuan vlerësimet." : "Could not load reviews."}</p>
-            <button onClick={() => fetchReviews(true)} className="flex items-center gap-2 text-sm text-accent hover:underline">
-              <RefreshCw className="w-4 h-4" /> {language === "sq" ? "Provo Përsëri" : "Try Again"}
+          <div className="flex flex-col items-center gap-3 py-16">
+            <p className="text-muted-foreground text-sm">
+              {language === "sq" ? "Nuk u ngarkuan vlerësimet." : "Could not load reviews."}
+            </p>
+            <button
+              onClick={() => fetchReviews(true)}
+              className="flex items-center gap-2 text-sm text-accent hover:underline"
+            >
+              <RefreshCw className="w-4 h-4" />
+              {language === "sq" ? "Provo Përsëri" : "Try Again"}
             </button>
           </div>
         )}
@@ -207,113 +376,88 @@ export default function GoogleReviews() {
         {/* Carousel */}
         {!loading && !error && reviews.length > 0 && (
           <div
-            className="relative max-w-5xl mx-auto"
+            className="relative"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* 3D card stack */}
-            <div className="relative h-[340px] md:h-[280px]" style={{ perspective: "1000px", transformStyle: "preserve-3d" }}>
-              {reviews.map((review, index) => {
-                const offset = index - activeIndex
-                const isActive = index === activeIndex
-                const text = getText(review)
-                const stars = getStars(review)
-                const gradient = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length]
-
-                return (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-all duration-700 ease-out ${isActive ? "z-20" : offset > 0 ? "z-10" : "z-0"}`}
-                    style={{
-                      transform: `translateX(${offset * 50}%) translateZ(${isActive ? 0 : -200}px) scale(${isActive ? 1 : 0.9}) rotateY(${offset * -10}deg)`,
-                      opacity: Math.abs(offset) > 1 ? 0 : 1,
-                      pointerEvents: isActive ? "auto" : "none",
-                    }}
-                  >
-                    <div className="glass-strong rounded-3xl shadow-2xl h-full overflow-hidden">
-                      <div className="grid md:grid-cols-2 h-full">
-                        {/* Left — avatar panel */}
-                        <div className={`relative flex flex-col items-center justify-center bg-gradient-to-br ${gradient} p-8 gap-4`}>
-                          {/* Decorative quote */}
-                          <div className="absolute top-6 left-6 opacity-20">
-                            <Quote className="w-16 h-16 text-white" strokeWidth={1} />
-                          </div>
-
-                          {/* Avatar */}
-                          <div className="relative z-10 w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border-4 border-white/30">
-                            <span className="text-white text-3xl font-bold">
-                              {getInitials(review.name)}
-                            </span>
-                          </div>
-
-                          {/* Name + date */}
-                          <div className="relative z-10 text-center">
-                            <p className="text-white font-bold text-lg leading-tight">{review.name ?? "Patient"}</p>
-                            <p className="text-white/70 text-sm mt-1">{timeAgo(getDate(review), language)}</p>
-                          </div>
-
-                          {/* Stars */}
-                          <div className="relative z-10 flex gap-1">
-                            {renderStars(stars)}
-                          </div>
-
-                          {/* Decorative border frame */}
-                          <div className="absolute inset-4 rounded-2xl border border-white/20 pointer-events-none" />
-                        </div>
-
-                        {/* Right — review text */}
-                        <div className="flex flex-col justify-center p-8 md:p-10">
-                          <blockquote className="text-lg md:text-xl text-foreground leading-relaxed italic">
-                            "{text}"
-                          </blockquote>
-                          {/* Google badge */}
-                          <div className="mt-6 flex items-center gap-2">
-                            <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                            </svg>
-                            <span className="text-xs text-muted-foreground font-medium">Google Review</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {/* Cards grid — 3 at a time */}
+            <div
+              key={animKey}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up"
+            >
+              {visibleReviews.map((review, i) => {
+                const hasText = getText(review).length > 0
+                const globalIndex = startIdx + i
+                return hasText ? (
+                  <TextReviewCard key={globalIndex} review={review} index={globalIndex} />
+                ) : (
+                  <CompactReviewCard key={globalIndex} review={review} index={globalIndex} />
                 )
               })}
             </div>
 
-            {/* Nav arrows */}
-            <button
-              onClick={handlePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group"
-            >
-              <ChevronLeft className="w-6 h-6 text-accent group-hover:-translate-x-1 transition-transform duration-300" />
-            </button>
-            <button
-              onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group"
-            >
-              <ChevronRight className="w-6 h-6 text-accent group-hover:translate-x-1 transition-transform duration-300" />
-            </button>
+            {/* Navigation row */}
+            <div className="mt-10 flex items-center justify-center gap-6">
+              {/* Prev */}
+              <button
+                onClick={handlePrev}
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
+                disabled={totalPages <= 1}
+                aria-label="Previous"
+              >
+                <ChevronLeft className="w-5 h-5 text-accent group-hover:-translate-x-0.5 transition-transform duration-200" />
+              </button>
 
-            {/* Progress dots */}
-            <div className="mt-8 flex items-center justify-center gap-2">
-              {reviews.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => { setActiveIndex(index); setProgress(0) }}
-                  className="relative h-1 w-16 bg-border rounded-full overflow-hidden"
-                >
-                  <div
-                    className="absolute inset-0 gradient-blue-purple transition-all duration-100"
-                    style={{
-                      width: index === activeIndex ? `${progress}%` : index < activeIndex ? "100%" : "0%",
-                    }}
-                  />
-                </button>
-              ))}
+              {/* Page dots */}
+              <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goTo(i)}
+                    className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+                    style={{ width: i === pageIndex ? 32 : 8, background: i === pageIndex ? "transparent" : "hsl(var(--border))" }}
+                    aria-label={`Page ${i + 1}`}
+                  >
+                    {i === pageIndex && (
+                      <div className="absolute inset-0 gradient-blue-purple rounded-full">
+                        <div
+                          className="absolute inset-0 bg-white/30 rounded-full transition-none"
+                          style={{ width: `${100 - progress}%`, right: 0, left: "auto" }}
+                        />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Next */}
+              <button
+                onClick={handleNext}
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
+                disabled={totalPages <= 1}
+                aria-label="Next"
+              >
+                <ChevronRight className="w-5 h-5 text-accent group-hover:translate-x-0.5 transition-transform duration-200" />
+              </button>
+            </div>
+
+            {/* Counter + view all link */}
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <span className="text-sm text-muted-foreground">
+                {language === "sq"
+                  ? `${pageIndex + 1} / ${totalPages} faqe · ${reviews.length} vlerësime`
+                  : `${pageIndex + 1} / ${totalPages} · ${reviews.length} reviews`}
+              </span>
+              <a
+                href={MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline font-medium"
+              >
+                <GoogleLogo />
+                {language === "sq" ? "Shiko të gjitha" : "View all on Google"}
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
         )}

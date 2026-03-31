@@ -11,7 +11,7 @@ export default function Home() {
       <ServicesOverview />
       <WhyChooseUs />
       <GoogleReviews />
-      <Testimonials />
+      {/* <Testimonials /> */}
     </div>
   )
 }
