@@ -19,7 +19,7 @@ interface ApifyReview {
 const APIFY_TOKEN = (import.meta as any).env.VITE_APIFY_TOKEN as string
 const MAPS_URL =
   "https://www.google.com/maps/place/Solus+Dental+Solution/@41.3338403,19.8117894,17z/data=!3m1!4b1!4m6!3m5!1s0x135031005e7546d3:0xd7ceb5f39b9ae6!8m2!3d41.3338403!4d19.8117894!16s%2Fg%2F11y9_l7x7g"
-const CACHE_KEY = "solus_reviews_v3"
+const CACHE_KEY_PREFIX = "solus_reviews_v4_"
 const CACHE_TTL = 24 * 60 * 60 * 1000
 const CARDS_PER_PAGE = 3
 const AUTOPLAY_MS = 5000
@@ -79,7 +79,7 @@ const AVATAR_GRADIENTS = [
 
 function StarRow({ count }: { count: number }) {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-0.5 justify-center">
       {Array.from({ length: 5 }, (_, i) => (
         <Star
           key={i}
@@ -101,11 +101,13 @@ function GoogleLogo() {
   )
 }
 
-// ─── Card: review WITH text ───────────────────────────────────────────────────
-function TextReviewCard({ review, index }: { review: ApifyReview; index: number }) {
+// ─── Unified Review Card ──────────────────────────────────────────────────────
+// All cards share the same centered layout. Text reviews show the quote below the stars.
+function ReviewCard({ review, index }: { review: ApifyReview; index: number }) {
   const { language } = useLanguage()
   const stars = getStars(review)
   const text = getText(review)
+  const hasText = text.length > 0
   const gradient = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length]
 
   return (
@@ -113,76 +115,25 @@ function TextReviewCard({ review, index }: { review: ApifyReview; index: number 
       href={getReviewLink(review)}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col glass-strong rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer"
+      className="group flex flex-col items-center glass-strong rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer p-6 text-center relative"
     >
       {/* Top accent bar */}
-      <div className={`h-1 w-full bg-gradient-to-r ${gradient} opacity-80`} />
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient} opacity-80`} />
 
-      <div className="flex flex-col flex-1 p-6 gap-4">
-        {/* Header: avatar + name + date */}
-        <div className="flex items-center gap-3">
-          <div className={`w-11 h-11 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-md`}>
-            <span className="text-white text-sm font-bold tracking-wide">
-              {getInitials(review.name)}
-            </span>
-          </div>
-          <div className="min-w-0">
-            <p className="font-semibold text-foreground text-sm leading-tight truncate">
-              {review.name ?? "Patient"}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {timeAgo(getDate(review), language)}
-            </p>
-          </div>
-          <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-accent/70 transition-colors ml-auto flex-shrink-0" />
-        </div>
-
-        {/* Stars */}
-        <StarRow count={stars} />
-
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-        {/* Full review text — no truncation */}
-        <blockquote className="flex-1 text-sm text-foreground/80 leading-relaxed italic">
-          "{text}"
-        </blockquote>
-
-        {/* Google badge */}
-        <div className="flex items-center gap-1.5 pt-2 border-t border-border/50">
-          <GoogleLogo />
-          <span className="text-xs text-muted-foreground font-medium">Google Review</span>
-        </div>
-      </div>
-    </a>
-  )
-}
-
-// ─── Card: review WITHOUT text (compact, centered) ────────────────────────────
-function CompactReviewCard({ review, index }: { review: ApifyReview; index: number }) {
-  const { language } = useLanguage()
-  const stars = getStars(review)
-  const gradient = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length]
-
-  return (
-    <a
-      href={getReviewLink(review)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex flex-col items-center justify-center glass-strong rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer p-6 text-center relative"
-    >
-      {/* Soft gradient background glow */}
+      {/* Soft gradient background glow on hover */}
       <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl`} />
 
       {/* Large avatar */}
-      <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg mb-4 group-hover:scale-105 transition-transform duration-300`}>
-        <span className="text-white text-xl font-bold tracking-wide">
+      <div
+        className={`w-14 h-14 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg mt-2 mb-3 group-hover:scale-105 transition-transform duration-300 flex-shrink-0`}
+      >
+        <span className="text-white text-base font-bold tracking-wide">
           {getInitials(review.name)}
         </span>
       </div>
 
       {/* Name */}
-      <p className="font-semibold text-foreground text-base leading-tight mb-1">
+      <p className="font-semibold text-foreground text-sm leading-tight mb-0.5">
         {review.name ?? "Patient"}
       </p>
 
@@ -194,12 +145,21 @@ function CompactReviewCard({ review, index }: { review: ApifyReview; index: numb
       {/* Stars */}
       <StarRow count={stars} />
 
-      {/* Stars label */}
-      <p className="text-xs text-muted-foreground mt-2 mb-4">
-        {stars === 5
-          ? language === "sq" ? "Vlerësim i shkëlqyer" : "Excellent rating"
-          : language === "sq" ? "Vlerësim i mirë" : "Great rating"}
-      </p>
+      {/* Review text (only for reviews that have text) */}
+      {hasText ? (
+        <>
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent my-4" />
+          <blockquote className="flex-1 text-sm text-foreground/80 leading-relaxed italic">
+            "{text}"
+          </blockquote>
+        </>
+      ) : (
+        <p className="text-xs text-muted-foreground mt-2 mb-2">
+          {stars === 5
+            ? language === "sq" ? "Vlerësim i shkëlqyer" : "Excellent rating"
+            : language === "sq" ? "Vlerësim i mirë" : "Great rating"}
+        </p>
+      )}
 
       {/* Google badge */}
       <div className="flex items-center gap-1.5 mt-auto pt-3 border-t border-border/50 w-full justify-center">
@@ -217,18 +177,20 @@ export default function GoogleReviews() {
   const [reviews, setReviews] = useState<ApifyReview[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [pageIndex, setPageIndex] = useState(0) // which "page" of 3 we're on
+  const [pageIndex, setPageIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [animKey, setAnimKey] = useState(0) // force re-mount for fade-in
+  const [animKey, setAnimKey] = useState(0)
 
   const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE)
 
-  // ─── Fetch ─────────────────────────────────────────────────────────────────
-  const fetchReviews = async (force = false) => {
+  // ─── Fetch (language-aware) ─────────────────────────────────────────────────
+  const fetchReviews = useCallback(async (force = false) => {
+    const cacheKey = CACHE_KEY_PREFIX + language
+
     if (!force) {
       try {
-        const raw = localStorage.getItem(CACHE_KEY)
+        const raw = localStorage.getItem(cacheKey)
         if (raw) {
           const cached = JSON.parse(raw)
           if (Date.now() - cached.ts < CACHE_TTL) {
@@ -253,7 +215,7 @@ export default function GoogleReviews() {
             startUrls: [{ url: MAPS_URL }],
             maxReviews: 30,
             reviewsSort: "newest",
-            language: "en",
+            language: language === "sq" ? "sq" : "en",
           }),
         }
       )
@@ -271,19 +233,30 @@ export default function GoogleReviews() {
         raw = data
       }
 
-      // Show ALL reviews (no text or star filter) – up to 30
-      const all = raw.filter((r) => getStars(r) >= 4).slice(0, 30)
+      const filtered = raw.filter((r) => getStars(r) >= 4).slice(0, 30)
 
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ reviews: all, ts: Date.now() }))
-      setReviews(all)
+      // Sort: reviews WITH text come first
+      const sorted = [...filtered].sort((a, b) => {
+        const aHasText = getText(a).length > 0 ? 1 : 0
+        const bHasText = getText(b).length > 0 ? 1 : 0
+        return bHasText - aHasText
+      })
+
+      localStorage.setItem(cacheKey, JSON.stringify({ reviews: sorted, ts: Date.now() }))
+      setReviews(sorted)
     } catch (err: any) {
       setError(err.message ?? "Unknown error")
     } finally {
       setLoading(false)
     }
-  }
+  }, [language])
 
-  useEffect(() => { fetchReviews() }, [])
+  // Re-fetch when language changes
+  useEffect(() => {
+    setPageIndex(0)
+    setProgress(0)
+    fetchReviews()
+  }, [fetchReviews])
 
   // ─── Navigation ────────────────────────────────────────────────────────────
   const goTo = useCallback((page: number) => {
@@ -335,9 +308,9 @@ export default function GoogleReviews() {
             </span>
           </h2>
           <p className="text-lg text-muted-foreground">
-          {language === "sq"
-  ? "Lexoni përvojat e pacientëve që na kanë besuar buzëqeshjen e tyre"
-  : "Read the experiences of patients who trusted us with their smiles"}
+            {language === "sq"
+              ? "Lexoni përvojat e pacientëve që na kanë besuar buzëqeshjen e tyre"
+              : "Read the experiences of patients who trusted us with their smiles"}
           </p>
         </div>
 
@@ -380,13 +353,8 @@ export default function GoogleReviews() {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up"
             >
               {visibleReviews.map((review, i) => {
-                const hasText = getText(review).length > 0
                 const globalIndex = startIdx + i
-                return hasText ? (
-                  <TextReviewCard key={globalIndex} review={review} index={globalIndex} />
-                ) : (
-                  <CompactReviewCard key={globalIndex} review={review} index={globalIndex} />
-                )
+                return <ReviewCard key={globalIndex} review={review} index={globalIndex} />
               })}
             </div>
 
