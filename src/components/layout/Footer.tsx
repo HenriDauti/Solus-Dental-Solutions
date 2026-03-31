@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Link } from 'react-router-dom';
@@ -6,13 +6,13 @@ import { Link } from 'react-router-dom';
 const Footer: React.FC = () => {
   const { t } = useLanguage();
 
-const footerLinks = {
-  services: [
-    { name: t('footer.services.general'), href: '/services#terapi' },
-    { name: t('footer.services.cosmetic'), href: '/services#estetike' },
-    { name: t('footer.services.orthodontics'), href: '/services#ortodonci' },
-    { name: t('footer.services.implants'), href: '/services#kirurgji' },
-  ],
+  const footerLinks = {
+    services: [
+      { name: t('footer.services.general'), href: '/services#terapi' },
+      { name: t('footer.services.cosmetic'), href: '/services#estetike' },
+      { name: t('footer.services.orthodontics'), href: '/services#ortodonci' },
+      { name: t('footer.services.implants'), href: '/services#kirurgji' },
+    ],
     company: [
       { name: t('footer.company.about'), href: '/about' },
       { name: t('footer.company.team'), href: '/about' },
@@ -26,13 +26,13 @@ const footerLinks = {
     ],
   };
 
-const socialLinks = [
-  { icon: Facebook, href: 'https://www.facebook.com/p/Solus-Dental-Solution-61568431454397/', label: 'Facebook', color: 'hover:text-blue-400' },
-  { icon: Instagram, href: 'https://www.instagram.com/solus.dental.solution/', label: 'Instagram', color: 'hover:text-pink-400' },
-];
+  const socialLinks = [
+    { icon: Facebook, href: 'https://www.facebook.com/p/Solus-Dental-Solution-61568431454397/', label: 'Facebook', color: 'hover:text-blue-400' },
+    { icon: Instagram, href: 'https://www.instagram.com/solus.dental.solution/', label: 'Instagram', color: 'hover:text-pink-400' },
+  ];
 
   return (
-  <footer className="relative bg-gradient-to-br from-primary via-primary to-accent text-white overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-primary via-primary to-accent text-white overflow-hidden">
       {/* Decorative Wave Divider */}
       <div className="absolute top-0 left-0 w-full overflow-hidden leading-none rotate-180">
         <svg
@@ -57,10 +57,10 @@ const socialLinks = [
       </div>
 
       <div className="relative container-custom pt-24 pb-12">
+        {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Logo */}
             <Link to="/" className="inline-block">
               <img
                 src="/solus%20Inverted%20Color.png"
@@ -68,11 +68,9 @@ const socialLinks = [
                 className="h-16 w-auto object-contain"
               />
             </Link>
-
             <p className="text-white/80 leading-relaxed">
               {t('footer.description')}
             </p>
-
           </div>
 
           {/* Services */}
@@ -124,9 +122,7 @@ const socialLinks = [
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-white/70 flex-shrink-0 mt-1" />
-                <span className="text-white/80">
-                  Rruga Ramazan Kasa, Tiranë
-                </span>
+<span className="text-white/80">{t('footer.address')}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-white/70 flex-shrink-0" />
@@ -150,15 +146,36 @@ const socialLinks = [
           </div>
         </div>
 
+        {/* Map Section */}
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="w-4 h-4 text-white/60" />
+   <span className="text-sm font-medium text-white/60 uppercase tracking-wider">
+  {t('footer.address')}
+</span>
+          </div>
+          <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-xl">
+            {/* Subtle gradient overlay on top edge to blend with footer */}
+            <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-primary/40 to-transparent z-10 pointer-events-none" />
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.287050000001!2d19.8115!3d41.3341!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1350c8e3f6e3f6e3%3A0x1350c8e3f6e3f6e3!2s8RM6%2BGPM%2C%20Rruga%20Ramazan%20Kasa%2C%20Tiran%C3%AB!5e0!3m2!1sen!2sal!4v1234567890"
+              width="100%"
+              height="200"
+              style={{ border: 0, display: 'block', filter: 'brightness(0.85) saturate(0.8)' }}
+              allowFullScreen={false}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Solus Dental Solution location"
+            />
+          </div>
+        </div>
+
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            {/* Copyright */}
             <p className="text-white/70 text-sm">
               © {new Date().getFullYear()} Solus Dental Solution. {t('footer.rights')}
             </p>
-
-            {/* Social Links */}
             <div className="flex items-center gap-4">
               {socialLinks.map((social) => {
                 const Icon = social.icon;

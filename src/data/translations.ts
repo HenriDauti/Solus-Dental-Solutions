@@ -15,7 +15,7 @@ export const translations = {
       badge: "Kujdes Dentar Premium",
       title: "Buzëqeshja Juaj",
       subtitle: "Pasioni Ynë",
-      description: "Kujdesi dentar profesional me teknologjinë më të fundit dhe vëmendje personale për secilin pacient.",
+description: "Krijojmë buzëqeshje të shëndetshme dhe estetike përmes trajtimeve moderne dhe një qasjeje të personalizuar për çdo pacient.",
       cta: {
         primary: "Rezervo Takim",
         secondary: "Shiko Videon",
@@ -60,7 +60,7 @@ export const translations = {
     whyChooseUs: {
       title: "Pse të na Zgjidhni",
       items: [
-        { title: "Përvojë", desc: "15+ vjet në industriën dentare" },
+{ title: "Përvojë", desc: "Përvojë e gjerë në industrinë dentare" },
         { title: "Teknologji", desc: "Pajisje më të fundit në teknologji dentare" },
         { title: "Kujesi Pacienti", desc: "Shëndeti juaj është prioriteti ynë" },
         { title: "Rezultate", desc: "Buzëqeshje të përsosura, pacientë të lumtur" },
@@ -163,7 +163,7 @@ export const translations = {
       badge: "Premium Dental Care",
       title: "Your Smile",
       subtitle: "Our Passion",
-      description: "Professional dental care with modern technology and personal attention for every patient.",
+description: "We create healthy and aesthetic smiles through modern treatments and a personalized approach for every patient.",
       cta: {
         primary: "Book Appointment",
         secondary: "Watch Video",
@@ -208,7 +208,7 @@ export const translations = {
     whyChooseUs: {
       title: "Why Choose Us",
       items: [
-        { title: "Experience", desc: "15+ years in dental industry" },
+{ title: "Experience", desc: "Extensive experience in the dental industry" },
         { title: "Technology", desc: "Latest advancements in dental equipment" },
         { title: "Patient Care", desc: "Your health is our priority" },
         { title: "Results", desc: "Perfect smiles, happy patients" },
@@ -233,7 +233,7 @@ export const translations = {
       },
       hours: "Working Hours",
       rights: "All rights reserved.",
-      address: "Rruga Ramazan Kasa, Tiranë",
+    address: "Ramazan Kasa Street, Tirana",
       phone: "+355 69 770 7078",
       email: "solusdentalsolution@gmail.com",
       services: {

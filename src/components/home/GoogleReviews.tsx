@@ -272,7 +272,7 @@ export default function GoogleReviews() {
       }
 
       // Show ALL reviews (no text or star filter) – up to 30
-      const all = raw.slice(0, 30)
+      const all = raw.filter((r) => getStars(r) >= 4).slice(0, 30)
 
       localStorage.setItem(CACHE_KEY, JSON.stringify({ reviews: all, ts: Date.now() }))
       setReviews(all)
@@ -329,21 +329,15 @@ export default function GoogleReviews() {
       <div className="container-custom relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong mb-6">
-            <GoogleLogo />
-            <span className="text-sm font-semibold text-foreground">
-              {language === "sq" ? "Vlerësime nga Google" : "Google Reviews"}
-            </span>
-          </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             <span className="gradient-text">
               {language === "sq" ? "Çfarë Thonë Pacientët" : "What Our Patients Say"}
             </span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            {language === "sq"
-              ? "Vlerësime reale nga Google nga pacientët tanë"
-              : "Real Google reviews from our patients"}
+          {language === "sq"
+  ? "Lexoni përvojat e pacientëve që na kanë besuar buzëqeshjen e tyre"
+  : "Read the experiences of patients who trusted us with their smiles"}
           </p>
         </div>
 
