@@ -1,45 +1,11 @@
 import React, { useState, useRef } from 'react';
 import emailjs from '@emailjs/browser';
-import { Send, Check, AlertCircle, Loader2, CalendarCheck, ShieldAlert } from 'lucide-react';
+import { Send, Check, AlertCircle, Loader2, CalendarCheck } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 const EMAILJS_SERVICE_ID  = 'service_m7rsebc';
 const EMAILJS_TEMPLATE_ID = 'template_kubbt8t';
 const EMAILJS_PUBLIC_KEY  = 'ZZVjMHVPRlQK799al';
-
-const DAILY_LIMIT     = 2;
-const STORAGE_KEY     = 'solus_contact_submissions';
-
-/* ── Rate-limit helpers ─────────────────────────────────────────────────── */
-interface SubmissionRecord {
-  date: string;   // "YYYY-MM-DD"
-  count: number;
-}
-
-function getTodayString() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function getRecord(): SubmissionRecord {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const record: SubmissionRecord = JSON.parse(raw);
-      if (record.date === getTodayString()) return record;
-    }
-  } catch {}
-  return { date: getTodayString(), count: 0 };
-}
-
-function incrementRecord() {
-  const record = getRecord();
-  const updated = { date: getTodayString(), count: record.count + 1 };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-}
-
-function isLimitReached(): boolean {
-  return getRecord().count >= DAILY_LIMIT;
-}
 
 /* ── Types ──────────────────────────────────────────────────────────────── */
 interface FormData {
@@ -67,7 +33,7 @@ const ContactForm: React.FC = () => {
   const [isSuccess, setIsSuccess]       = useState(false);
   const [sendError, setSendError]       = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
- 
+
   const services = [
     { value: 'general',      label: t('services.general') },
     { value: 'cosmetic',     label: t('services.cosmetic') },
@@ -106,10 +72,6 @@ const ContactForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-if (isLimitReached()) {
-  setIsSuccess(true);
-  return;
-}
     const newErrors: FormErrors = {};
     Object.entries(formData).forEach(([key, value]) => {
       const error = validateField(key, value);
@@ -134,13 +96,9 @@ if (isLimitReached()) {
         EMAILJS_PUBLIC_KEY
       );
 
-      // Only increment AFTER a confirmed successful send
-      incrementRecord();
       setIsSuccess(true);
       setFormData({ name: '', email: '', phone: '', service: '', message: '' });
-
-      // After 5 s hide success; also re-check if limit is now reached
-setTimeout(() => setIsSuccess(false), 5000);
+      setTimeout(() => setIsSuccess(false), 5000);
 
     } catch (err) {
       console.error('EmailJS error:', err);
@@ -152,7 +110,6 @@ setTimeout(() => setIsSuccess(false), 5000);
       setIsSubmitting(false);
     }
   };
-
 
   /* ── Success state ──────────────────────────────────────────────────────── */
   if (isSuccess) {
@@ -182,17 +139,14 @@ setTimeout(() => setIsSuccess(false), 5000);
             <CalendarCheck className="w-5 h-5 text-accent flex-shrink-0" />
             <span>
               {language === 'sq'
-                ? 'Do t\'ju kthejmë përgjigje sa më shpejt.'
+                ? "Do t'ju kthejmë përgjigje sa më shpejt."
                 : "We'll get back to you as soon as possible."}
             </span>
           </div>
 
-          {/* Only show "send another" if they still have quota left */}
-          {!isLimitReached() && (
-            <button onClick={() => setIsSuccess(false)} className="btn btn-secondary text-sm">
-              {language === 'sq' ? 'Dërgo mesazh tjetër' : 'Send another message'}
-            </button>
-          )}
+          <button onClick={() => setIsSuccess(false)} className="btn btn-secondary text-sm">
+            {language === 'sq' ? 'Dërgo mesazh tjetër' : 'Send another message'}
+          </button>
 
         </div>
       </div>
@@ -209,8 +163,6 @@ setTimeout(() => setIsSuccess(false), 5000);
           <h3 className="text-3xl font-bold gradient-text mb-2">{t('form.title')}</h3>
           <p className="text-muted-foreground">{t('form.subtitle')}</p>
         </div>
-
-
 
         {/* Send Error Banner */}
         {sendError && (
