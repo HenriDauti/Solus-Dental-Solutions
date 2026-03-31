@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { servicesData } from '@/data/services';
-import { CheckCircle2, Clock } from 'lucide-react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -10,25 +9,25 @@ const Services: React.FC = () => {
   const services = servicesData[language];
 
   const serviceImages = [
-    '/crown.jpg',
-    '/dental therapy.png',
-    '/implants.jpg',
-    '/cosmetic.jpg',
-    '/braces.jpg'
+    '/terapi.jpeg',
+    '/implantologji.jpeg',
+    '/estetike.jpeg',
+    '/ortodonci.jpeg'
   ];
-const location = useLocation();
 
-useEffect(() => {
-  const hash = location.hash.slice(1);
-  if (hash) {
-    const el = document.getElementById(hash);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+  const location = useLocation();
+
+  useEffect(() => {
+    const hash = location.hash.slice(1);
+    if (hash) {
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      window.scrollTo(0, 0);
     }
-  } else {
-    window.scrollTo(0, 0);
-  }
-}, [location]);
+  }, [location]);
 
   return (
     <div className="min-h-screen">
@@ -70,7 +69,7 @@ useEffect(() => {
               >
                 {/* Gradient Glow Effect */}
                 <div className="absolute -inset-0.5 gradient-blue-purple rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500" />
-                
+
                 {/* Service Image */}
                 <div className="relative h-64 overflow-hidden rounded-t-xl">
                   <img
@@ -97,24 +96,6 @@ useEffect(() => {
                   <p className="text-foreground/80 leading-relaxed">
                     {service.details}
                   </p>
-
-                  {service.benefits && service.benefits.length > 0 && (
-                    <div className="space-y-3">
-                      {service.benefits.slice(0, 3).map((benefit, idx) => (
-                        <div key={idx} className="flex items-start gap-3 group/benefit">
-                          <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5 group-hover/benefit:scale-110 transition-transform duration-300" />
-                          <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
-                            {benefit}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 pt-4 border-t border-border/50 text-sm text-muted-foreground">
-                    <Clock className="w-4 h-4 text-accent" />
-                    <span className="font-medium">{service.duration}</span>
-                  </div>
                 </div>
 
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent/20 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -127,7 +108,7 @@ useEffect(() => {
       {/* CTA Section */}
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10" />
-        
+
         <div className="container-custom relative">
           <div className="max-w-3xl mx-auto text-center space-y-6 card-glass p-12 rounded-2xl">
             <h2 className="text-3xl md:text-4xl font-bold gradient-text">
@@ -135,7 +116,7 @@ useEffect(() => {
                 ? "Gati për të përmirësuar buzëqeshjen tuaj?"
                 : "Ready to improve your smile?"}
             </h2>
-            
+
             <p className="text-lg text-muted-foreground">
               {language === "sq"
                 ? "Rezervoni një konsultë sot dhe zbuloni se si mund t'ju ndihmojmë"
@@ -155,7 +136,7 @@ useEffect(() => {
               >
                 {language === "sq" ? "Rezervo Konsultë" : "Book Consultation"}
               </a>
-              
+
               <a href="/contact" className="btn btn-secondary">
                 {language === "sq" ? "Na Kontaktoni" : "Contact Us"}
               </a>

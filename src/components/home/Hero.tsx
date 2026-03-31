@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/context/LanguageContext';
 
 const Hero: React.FC = () => {
@@ -31,13 +32,10 @@ const Hero: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="space-y-8 animate-fade-in-up">
-            {/* Hero Title with Gradient */}
+            {/* Hero Title */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight animate-fade-in-up stagger-1">
               <span className="gradient-text block">
-                {t('hero.title')}
-              </span>
-              <span className="text-foreground block mt-2">
-                {t('hero.subtitle')}
+                Solus Dental Solution
               </span>
             </h1>
 
@@ -46,17 +44,15 @@ const Hero: React.FC = () => {
               {t('hero.description')}
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Button */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up stagger-3">
-              <a
-                href={`https://wa.me/355697707078?text=${encodeURIComponent(t('whatsapp.message'))}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/about"
                 className="btn btn-primary group btn-magnetic"
               >
-                {t('hero.cta.primary')}
+                {t('nav.about')}
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-              </a>
+              </Link>
             </div>
           </div>
 
