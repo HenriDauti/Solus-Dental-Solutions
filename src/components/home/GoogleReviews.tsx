@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react"
-import { Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink } from "lucide-react"
+import React, { useState, useEffect, useCallback, useRef } from "react"
+import { Star, ChevronLeft, ChevronRight, RefreshCw, ExternalLink, Loader2 } from "lucide-react"
 import { useLanguage } from "@/context/LanguageContext"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -17,54 +17,88 @@ interface ApifyReview {
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const APIFY_TOKEN = (import.meta as any).env.VITE_APIFY_TOKEN as string
+
+// One dataset per language — run the Apify scraper once per language in the dashboard
+const DATASET_IDS: Record<string, string> = {
+  en: (import.meta as any).env.VITE_APIFY_DATASET_ID_EN as string,
+  sq: (import.meta as any).env.VITE_APIFY_DATASET_ID_SQ as string,
+}
+
 const MAPS_URL =
   "https://www.google.com/maps/place/Solus+Dental+Solution/@41.3338403,19.8117894,17z/data=!3m1!4b1!4m6!3m5!1s0x135031005e7546d3:0xd7ceb5f39b9ae6!8m2!3d41.3338403!4d19.8117894!16s%2Fg%2F11y9_l7x7g"
-const CACHE_KEY_PREFIX = "solus_reviews_v4_"
-const CACHE_TTL = 24 * 60 * 60 * 1000
-const CARDS_PER_PAGE = 3
-const AUTOPLAY_MS = 5000
+
+const CACHE_KEY_PREFIX  = "solus_reviews_v6_"
+const CACHE_TTL         = 24 * 60 * 60 * 1000      // show cached reviews for up to 24 h
+const BG_REFRESH_AFTER  = 6  * 60 * 60 * 1000      // silently refresh if cache is older than 6 h
+const CARDS_PER_PAGE    = 3
+const AUTOPLAY_MS       = 5000
+
+// ─── UI strings ───────────────────────────────────────────────────────────────
+const UI: Record<string, Record<string, any>> = {
+  en: {
+    heading:    "What Our Patients Say",
+    subheading: "Read the experiences of patients who trusted us with their smiles",
+    loading:    "Loading reviews…",
+    refreshing: "Refreshing reviews…",
+    error:      "Could not load reviews.",
+    retry:      "Try Again",
+    viewAll:    "View all on Google",
+    excellent:  "Excellent rating",
+    great:      "Great rating",
+    counter:    (page: number, total: number, count: number) => `${page} / ${total} · ${count} reviews`,
+  },
+  sq: {
+    heading:    "Çfarë Thonë Pacientët",
+    subheading: "Lexoni përvojat e pacientëve që na kanë besuar buzëqeshjen e tyre",
+    loading:    "Duke ngarkuar vlerësimet…",
+    refreshing: "Duke përditësuar vlerësimet…",
+    error:      "Nuk u ngarkuan vlerësimet.",
+    retry:      "Provo Përsëri",
+    viewAll:    "Shiko të gjitha",
+    excellent:  "Vlerësim i shkëlqyer",
+    great:      "Vlerësim i mirë",
+    counter:    (page: number, total: number, count: number) => `${page} / ${total} faqe · ${count} vlerësime`,
+  },
+}
+
+function t(lang: string, key: string, ...args: any[]): string {
+  const entry = UI[lang]?.[key] ?? UI["en"][key]
+  return typeof entry === "function" ? entry(...args) : entry
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function getStars(r: ApifyReview) {
-  return r.stars ?? r.rating ?? 0
-}
-function getText(r: ApifyReview) {
-  return (r.textTranslated ?? r.text ?? "").trim()
-}
-function getDate(r: ApifyReview) {
-  return r.publishAt ?? r.publishedAtDate
-}
-function getReviewLink(r: ApifyReview) {
-  return r.reviewUrl ?? MAPS_URL
+function getStars(r: ApifyReview) { return r.stars ?? r.rating ?? 0 }
+function getText(r: ApifyReview)  { return (r.textTranslated ?? r.text ?? "").trim() }
+function getDate(r: ApifyReview)  { return r.publishAt ?? r.publishedAtDate }
+function getLink(r: ApifyReview)  { return r.reviewUrl ?? MAPS_URL }
+
+function processReviews(raw: ApifyReview[]): ApifyReview[] {
+  const filtered = raw.filter((r) => getStars(r) >= 4).slice(0, 30)
+  return [...filtered].sort((a, b) => (getText(b).length > 0 ? 1 : 0) - (getText(a).length > 0 ? 1 : 0))
 }
 
-function timeAgo(dateStr: string | undefined, language: string): string {
+function timeAgo(dateStr: string | undefined, lang: string): string {
   if (!dateStr) return ""
   const date = new Date(dateStr)
   if (isNaN(date.getTime())) return ""
-  const diff = Date.now() - date.getTime()
-  const days = Math.floor(diff / 86400000)
+  const diff   = Date.now() - date.getTime()
+  const days   = Math.floor(diff / 86_400_000)
   const months = Math.floor(days / 30)
-  const years = Math.floor(days / 365)
-  if (language === "sq") {
-    if (years > 0) return `${years} vit më parë`
+  const years  = Math.floor(days / 365)
+  if (lang === "sq") {
+    if (years  > 0) return `${years} vit më parë`
     if (months > 0) return `${months} muaj më parë`
-    if (days > 0) return `${days} ditë më parë`
+    if (days   > 0) return `${days} ditë më parë`
     return "Sot"
   }
-  if (years > 0) return `${years} year${years > 1 ? "s" : ""} ago`
+  if (years  > 0) return `${years} year${years > 1 ? "s" : ""} ago`
   if (months > 0) return `${months} month${months > 1 ? "s" : ""} ago`
-  if (days > 0) return `${days} day${days > 1 ? "s" : ""} ago`
+  if (days   > 0) return `${days} day${days > 1 ? "s" : ""} ago`
   return "Today"
 }
 
 function getInitials(name = "?") {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2)
+  return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
 }
 
 const AVATAR_GRADIENTS = [
@@ -77,14 +111,12 @@ const AVATAR_GRADIENTS = [
   "from-blue-600 to-violet-600",
 ]
 
+// ─── Sub-components ───────────────────────────────────────────────────────────
 function StarRow({ count }: { count: number }) {
   return (
     <div className="flex gap-0.5 justify-center">
       {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          className={`w-4 h-4 ${i < count ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-        />
+        <Star key={i} className={`w-4 h-4 ${i < count ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
       ))}
     </div>
   )
@@ -101,67 +133,42 @@ function GoogleLogo() {
   )
 }
 
-// ─── Unified Review Card ──────────────────────────────────────────────────────
-// All cards share the same centered layout. Text reviews show the quote below the stars.
-function ReviewCard({ review, index }: { review: ApifyReview; index: number }) {
-  const { language } = useLanguage()
-  const stars = getStars(review)
-  const text = getText(review)
-  const hasText = text.length > 0
+function ReviewCard({ review, index, lang }: { review: ApifyReview; index: number; lang: string }) {
+  const stars    = getStars(review)
+  const text     = getText(review)
+  const hasText  = text.length > 0
   const gradient = AVATAR_GRADIENTS[index % AVATAR_GRADIENTS.length]
 
   return (
     <a
-      href={getReviewLink(review)}
+      href={getLink(review)}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex flex-col items-center glass-strong rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 h-full cursor-pointer p-6 text-center relative"
     >
-      {/* Top accent bar */}
       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient} opacity-80`} />
-
-      {/* Soft gradient background glow on hover */}
       <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl`} />
 
-      {/* Large avatar */}
-      <div
-        className={`w-14 h-14 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg mt-2 mb-3 group-hover:scale-105 transition-transform duration-300 flex-shrink-0`}
-      >
-        <span className="text-white text-base font-bold tracking-wide">
-          {getInitials(review.name)}
-        </span>
+      <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg mt-2 mb-3 group-hover:scale-105 transition-transform duration-300 flex-shrink-0`}>
+        <span className="text-white text-base font-bold tracking-wide">{getInitials(review.name)}</span>
       </div>
 
-      {/* Name */}
-      <p className="font-semibold text-foreground text-sm leading-tight mb-0.5">
-        {review.name ?? "Patient"}
-      </p>
+      <p className="font-semibold text-foreground text-sm leading-tight mb-0.5">{review.name ?? "Patient"}</p>
+      <p className="text-xs text-muted-foreground mb-3">{timeAgo(getDate(review), lang)}</p>
 
-      {/* Date */}
-      <p className="text-xs text-muted-foreground mb-3">
-        {timeAgo(getDate(review), language)}
-      </p>
-
-      {/* Stars */}
       <StarRow count={stars} />
 
-      {/* Review text (only for reviews that have text) */}
       {hasText ? (
         <>
           <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent my-4" />
-          <blockquote className="flex-1 text-sm text-foreground/80 leading-relaxed italic">
-            "{text}"
-          </blockquote>
+          <blockquote className="flex-1 text-sm text-foreground/80 leading-relaxed italic">"{text}"</blockquote>
         </>
       ) : (
         <p className="text-xs text-muted-foreground mt-2 mb-2">
-          {stars === 5
-            ? language === "sq" ? "Vlerësim i shkëlqyer" : "Excellent rating"
-            : language === "sq" ? "Vlerësim i mirë" : "Great rating"}
+          {stars === 5 ? t(lang, "excellent") : t(lang, "great")}
         </p>
       )}
 
-      {/* Google badge */}
       <div className="flex items-center gap-1.5 mt-auto pt-3 border-t border-border/50 w-full justify-center">
         <GoogleLogo />
         <span className="text-xs text-muted-foreground font-medium">Google Review</span>
@@ -174,127 +181,174 @@ function ReviewCard({ review, index }: { review: ApifyReview; index: number }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function GoogleReviews() {
   const { language } = useLanguage()
-  const [reviews, setReviews] = useState<ApifyReview[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [pageIndex, setPageIndex] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [animKey, setAnimKey] = useState(0)
 
+  // Separate state per language — switching is always instant once both are loaded
+  const [reviewsByLang, setReviewsByLang] = useState<Record<string, ApifyReview[]>>({ en: [], sq: [] })
+  const [loadingLangs,  setLoadingLangs]  = useState<Record<string, boolean>>({ en: true, sq: true })
+  const [errorLangs,    setErrorLangs]    = useState<Record<string, string | null>>({ en: null, sq: null })
+  const [isRefreshing,  setIsRefreshing]  = useState(false)
+
+  const [pageIndex, setPageIndex] = useState(0)
+  const [isPaused,  setIsPaused]  = useState(false)
+  const [progress,  setProgress]  = useState(0)
+  const [animKey,   setAnimKey]   = useState(0)
+
+  const bgRefreshRef = useRef<Record<string, AbortController>>({})
+
+  // Derived from current language
+  const reviews    = reviewsByLang[language] ?? []
+  const loading    = loadingLangs[language]  ?? true
+  const error      = errorLangs[language]    ?? null
   const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE)
 
-  // ─── Fetch (language-aware) ─────────────────────────────────────────────────
-  const fetchReviews = useCallback(async (force = false) => {
-    const cacheKey = CACHE_KEY_PREFIX + language
+  // ─── Fast path: read pre-stored dataset (~200 ms) ─────────────────────────
+  const fetchFromDataset = useCallback(async (lang: string): Promise<ApifyReview[]> => {
+    const datasetId = DATASET_IDS[lang]
+    if (!datasetId) throw new Error(`No dataset ID configured for language: ${lang}`)
+    const url = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_TOKEN}&format=json&clean=true&limit=50`
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`Dataset fetch failed: HTTP ${res.status}`)
+    const data = await res.json()
+    const first = data?.[0]
+    if (!first) throw new Error("Empty dataset")
+    const raw: ApifyReview[] = Array.isArray(first?.reviews) ? first.reviews : data
+    return processReviews(raw)
+  }, [])
 
+  // ─── Slow path: live scraper run (background refresh only) ────────────────
+  const triggerFreshRun = useCallback(async (lang: string, signal: AbortSignal): Promise<ApifyReview[]> => {
+    const res = await fetch(
+      `https://api.apify.com/v2/acts/compass~google-maps-reviews-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}&timeout=90`,
+      {
+        method: "POST",
+        signal,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          startUrls: [{ url: MAPS_URL }],
+          maxReviews: 30,
+          reviewsSort: "newest",
+          language: lang,
+        }),
+      }
+    )
+    if (!res.ok) throw new Error(`Scraper run failed: HTTP ${res.status}`)
+    const data: any[] = await res.json()
+    const first = data?.[0]
+    if (!first) throw new Error("Empty response")
+    const raw: ApifyReview[] = Array.isArray(first?.reviews) ? first.reviews : data
+    return processReviews(raw)
+  }, [])
+
+  // ─── Non-blocking background refresh (tiny spinner, reviews stay visible) ─
+  const scheduleBackgroundRefresh = useCallback((lang: string, cacheKey: string) => {
+    bgRefreshRef.current[lang]?.abort()
+    const controller = new AbortController()
+    bgRefreshRef.current[lang] = controller
+
+    setIsRefreshing(true)
+    triggerFreshRun(lang, controller.signal)
+      .then((result) => {
+        if (!controller.signal.aborted) {
+          localStorage.setItem(cacheKey, JSON.stringify({ reviews: result, ts: Date.now() }))
+          setReviewsByLang((prev) => ({ ...prev, [lang]: result }))
+        }
+      })
+      .catch((err) => { if (err.name !== "AbortError") console.warn(`BG refresh (${lang}) failed:`, err) })
+      .finally(() => { if (!controller.signal.aborted) setIsRefreshing(false) })
+  }, [triggerFreshRun])
+
+  // ─── Load a single language: cache → dataset → scraper ────────────────────
+  const loadLanguage = useCallback(async (lang: string, force = false) => {
+    const cacheKey = CACHE_KEY_PREFIX + lang
+
+    // 1. localStorage cache (instant)
     if (!force) {
       try {
         const raw = localStorage.getItem(cacheKey)
         if (raw) {
           const cached = JSON.parse(raw)
-          if (Date.now() - cached.ts < CACHE_TTL) {
-            setReviews(cached.reviews)
-            setLoading(false)
+          const age = Date.now() - cached.ts
+          if (age < CACHE_TTL) {
+            setReviewsByLang((prev) => ({ ...prev, [lang]: cached.reviews }))
+            setLoadingLangs((prev)  => ({ ...prev, [lang]: false }))
+            if (age > BG_REFRESH_AFTER) scheduleBackgroundRefresh(lang, cacheKey)
             return
           }
         }
       } catch {}
     }
 
-    setLoading(true)
-    setError(null)
-
-    try {
-      const res = await fetch(
-        `https://api.apify.com/v2/acts/compass~google-maps-reviews-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}&timeout=90`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            startUrls: [{ url: MAPS_URL }],
-            maxReviews: 30,
-            reviewsSort: "newest",
-            language: language === "sq" ? "sq" : "en",
-          }),
-        }
-      )
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data: any[] = await res.json()
-      let raw: ApifyReview[] = []
-
-      const first = data?.[0]
-      if (!first) throw new Error("Empty response")
-
-      if (Array.isArray(first.reviews)) {
-        raw = first.reviews
-      } else {
-        raw = data
+    // 2. Fast dataset read
+    if (DATASET_IDS[lang]) {
+      try {
+        const result = await fetchFromDataset(lang)
+        localStorage.setItem(cacheKey, JSON.stringify({ reviews: result, ts: Date.now() }))
+        setReviewsByLang((prev) => ({ ...prev, [lang]: result }))
+        setLoadingLangs((prev)  => ({ ...prev, [lang]: false }))
+        setErrorLangs((prev)    => ({ ...prev, [lang]: null }))
+        scheduleBackgroundRefresh(lang, cacheKey)
+        return
+      } catch (err) {
+        console.warn(`Dataset fast-path (${lang}) failed, falling back to scraper:`, err)
       }
-
-      const filtered = raw.filter((r) => getStars(r) >= 4).slice(0, 30)
-
-      // Sort: reviews WITH text come first
-      const sorted = [...filtered].sort((a, b) => {
-        const aHasText = getText(a).length > 0 ? 1 : 0
-        const bHasText = getText(b).length > 0 ? 1 : 0
-        return bHasText - aHasText
-      })
-
-      localStorage.setItem(cacheKey, JSON.stringify({ reviews: sorted, ts: Date.now() }))
-      setReviews(sorted)
-    } catch (err: any) {
-      setError(err.message ?? "Unknown error")
-    } finally {
-      setLoading(false)
     }
-  }, [language])
 
-  // Re-fetch when language changes
+    // 3. Full scraper run (fallback)
+    setLoadingLangs((prev) => ({ ...prev, [lang]: true }))
+    setErrorLangs((prev)   => ({ ...prev, [lang]: null }))
+    try {
+      const controller = new AbortController()
+      bgRefreshRef.current[lang] = controller
+      const result = await triggerFreshRun(lang, controller.signal)
+      localStorage.setItem(cacheKey, JSON.stringify({ reviews: result, ts: Date.now() }))
+      setReviewsByLang((prev) => ({ ...prev, [lang]: result }))
+      setErrorLangs((prev)    => ({ ...prev, [lang]: null }))
+    } catch (err: any) {
+      if (err.name !== "AbortError")
+        setErrorLangs((prev) => ({ ...prev, [lang]: err.message ?? "Unknown error" }))
+    } finally {
+      setLoadingLangs((prev) => ({ ...prev, [lang]: false }))
+    }
+  }, [fetchFromDataset, triggerFreshRun, scheduleBackgroundRefresh])
+
+  // Load BOTH languages on mount so switching is always instant
+  useEffect(() => {
+    loadLanguage("en")
+    loadLanguage("sq")
+    return () => { Object.values(bgRefreshRef.current).forEach((c) => c.abort()) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Reset carousel when language switches
   useEffect(() => {
     setPageIndex(0)
     setProgress(0)
-    fetchReviews()
-  }, [fetchReviews])
+    setAnimKey((k) => k + 1)
+  }, [language])
 
   // ─── Navigation ────────────────────────────────────────────────────────────
-  const goTo = useCallback((page: number) => {
-    setPageIndex(page)
-    setProgress(0)
-    setAnimKey((k) => k + 1)
-  }, [])
-
-  const handleNext = useCallback(() => {
-    goTo((pageIndex + 1) % totalPages)
-  }, [pageIndex, totalPages, goTo])
-
-  const handlePrev = useCallback(() => {
-    goTo((pageIndex - 1 + totalPages) % totalPages)
-  }, [pageIndex, totalPages, goTo])
+  const goTo      = useCallback((page: number) => { setPageIndex(page); setProgress(0); setAnimKey((k) => k + 1) }, [])
+  const handleNext = useCallback(() => goTo((pageIndex + 1) % totalPages), [pageIndex, totalPages, goTo])
+  const handlePrev = useCallback(() => goTo((pageIndex - 1 + totalPages) % totalPages), [pageIndex, totalPages, goTo])
 
   // ─── Autoplay ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (isPaused || reviews.length === 0 || totalPages <= 1) return
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          handleNext()
-          return 0
-        }
+        if (prev >= 100) { handleNext(); return 0 }
         return prev + (100 / (AUTOPLAY_MS / 100))
       })
     }, 100)
     return () => clearInterval(interval)
   }, [isPaused, reviews.length, totalPages, handleNext])
 
-  // ─── Visible slice ─────────────────────────────────────────────────────────
-  const startIdx = pageIndex * CARDS_PER_PAGE
+  // ─── Slice ─────────────────────────────────────────────────────────────────
+  const startIdx       = pageIndex * CARDS_PER_PAGE
   const visibleReviews = reviews.slice(startIdx, startIdx + CARDS_PER_PAGE)
 
   return (
     <section className="section relative overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 gradient-mesh opacity-10" />
       <div className="absolute top-20 left-20 w-64 h-64 gradient-purple-blue rounded-full blur-3xl opacity-20 animate-float" />
       <div className="absolute bottom-20 right-20 w-96 h-96 gradient-blue-purple rounded-full blur-3xl opacity-20 animate-float" style={{ animationDelay: "2s" }} />
@@ -303,39 +357,36 @@ export default function GoogleReviews() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">
-              {language === "sq" ? "Çfarë Thonë Pacientët" : "What Our Patients Say"}
-            </span>
+            <span className="gradient-text">{t(language, "heading")}</span>
           </h2>
-          <p className="text-lg text-muted-foreground">
-            {language === "sq"
-              ? "Lexoni përvojat e pacientëve që na kanë besuar buzëqeshjen e tyre"
-              : "Read the experiences of patients who trusted us with their smiles"}
+          <p className="text-lg text-muted-foreground flex items-center justify-center gap-2">
+            {t(language, "subheading")}
+            {isRefreshing && (
+              <span title={t(language, "refreshing")}>
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground/50 inline" />
+              </span>
+            )}
           </p>
         </div>
 
-        {/* Loading */}
+        {/* Loading — only shown on very first load with no cache */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="w-14 h-14 rounded-full border-4 border-primary/20 border-t-accent animate-spin" />
-            <p className="text-muted-foreground text-sm">
-              {language === "sq" ? "Duke ngarkuar vlerësimet…" : "Loading reviews…"}
-            </p>
+            <p className="text-muted-foreground text-sm">{t(language, "loading")}</p>
           </div>
         )}
 
         {/* Error */}
         {error && !loading && (
           <div className="flex flex-col items-center gap-3 py-16">
-            <p className="text-muted-foreground text-sm">
-              {language === "sq" ? "Nuk u ngarkuan vlerësimet." : "Could not load reviews."}
-            </p>
+            <p className="text-muted-foreground text-sm">{t(language, "error")}</p>
             <button
-              onClick={() => fetchReviews(true)}
+              onClick={() => loadLanguage(language, true)}
               className="flex items-center gap-2 text-sm text-accent hover:underline"
             >
               <RefreshCw className="w-4 h-4" />
-              {language === "sq" ? "Provo Përsëri" : "Try Again"}
+              {t(language, "retry")}
             </button>
           </div>
         )}
@@ -347,38 +398,31 @@ export default function GoogleReviews() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {/* Cards grid — 3 at a time */}
-            <div
-              key={animKey}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up"
-            >
-              {visibleReviews.map((review, i) => {
-                const globalIndex = startIdx + i
-                return <ReviewCard key={globalIndex} review={review} index={globalIndex} />
-              })}
+            <div key={animKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
+              {visibleReviews.map((review, i) => (
+                <ReviewCard key={startIdx + i} review={review} index={startIdx + i} lang={language} />
+              ))}
             </div>
 
-            {/* Navigation row */}
+            {/* Navigation */}
             <div className="mt-10 flex items-center justify-center gap-6">
-              {/* Prev */}
               <button
                 onClick={handlePrev}
-                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
                 disabled={totalPages <= 1}
                 aria-label="Previous"
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
               >
                 <ChevronLeft className="w-5 h-5 text-accent group-hover:-translate-x-0.5 transition-transform duration-200" />
               </button>
 
-              {/* Page dots */}
               <div className="flex items-center gap-2">
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i}
                     onClick={() => goTo(i)}
+                    aria-label={`Page ${i + 1}`}
                     className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
                     style={{ width: i === pageIndex ? 32 : 8, background: i === pageIndex ? "transparent" : "hsl(var(--border))" }}
-                    aria-label={`Page ${i + 1}`}
                   >
                     {i === pageIndex && (
                       <div className="absolute inset-0 gradient-blue-purple rounded-full">
@@ -392,23 +436,20 @@ export default function GoogleReviews() {
                 ))}
               </div>
 
-              {/* Next */}
               <button
                 onClick={handleNext}
-                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
                 disabled={totalPages <= 1}
                 aria-label="Next"
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
               >
                 <ChevronRight className="w-5 h-5 text-accent group-hover:translate-x-0.5 transition-transform duration-200" />
               </button>
             </div>
 
-            {/* Counter + view all link */}
+            {/* Counter + view all */}
             <div className="mt-4 flex items-center justify-center gap-4">
               <span className="text-sm text-muted-foreground">
-                {language === "sq"
-                  ? `${pageIndex + 1} / ${totalPages} faqe · ${reviews.length} vlerësime`
-                  : `${pageIndex + 1} / ${totalPages} · ${reviews.length} reviews`}
+                {t(language, "counter", pageIndex + 1, totalPages, reviews.length)}
               </span>
               <a
                 href={MAPS_URL}
@@ -417,7 +458,7 @@ export default function GoogleReviews() {
                 className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline font-medium"
               >
                 <GoogleLogo />
-                {language === "sq" ? "Shiko të gjitha" : "View all on Google"}
+                {t(language, "viewAll")}
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
