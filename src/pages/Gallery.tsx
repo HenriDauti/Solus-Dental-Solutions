@@ -60,7 +60,7 @@ export default function Gallery() {
       <section className="py-20 px-4">
         <div className="container-custom max-w-7xl">
           {/* Enhanced Tabs */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16 animate-fade-in-up">
+          <div className="flex flex-row justify-center gap-3 mb-16 animate-fade-in-up">
             {tabs.map((tab) => {
               const Icon = tab.icon
               const isActive = activeTab === tab.id
@@ -69,7 +69,7 @@ export default function Gallery() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as "clinic" | "results")}
-                  className={`group relative px-8 py-6 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
+className={`group relative px-4 py-4 sm:px-8 sm:py-6 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
                     isActive 
                       ? "bg-gradient-to-br from-primary to-accent text-white shadow-xl scale-105" 
                       : "glass-strong text-foreground hover:scale-105"

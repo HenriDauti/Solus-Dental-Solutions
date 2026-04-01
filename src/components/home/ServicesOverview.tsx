@@ -6,28 +6,19 @@ import { useLanguage } from "@/context/LanguageContext"
 import { translations } from "@/data/translations"
 
 const serviceIcons = {
-  protetike: Crown,        // Crowns, bridges, veneers
-  terapi: Activity,        // Dental therapy, treatments, root canals
-  kirurgji: Scissors,      // Dental surgery, extractions, implants
-  estetike: Sparkles,      // Cosmetic dentistry, whitening, veneers
-  ortodonci: Smile,        // Orthodontics, braces, aligners
+  protetike: Crown,
+  terapi: Activity,
+  kirurgji: Scissors,
+  estetike: Sparkles,
+  ortodonci: Smile,
 }
 
-// Service-specific gradient colors
 const serviceColors = {
   protetike: "from-amber-500/20 via-yellow-500/20 to-amber-500/20",
   terapi: "from-blue-500/20 via-cyan-500/20 to-blue-500/20",
   kirurgji: "from-red-500/20 via-rose-500/20 to-red-500/20",
   estetike: "from-pink-500/20 via-purple-500/20 to-pink-500/20",
   ortodonci: "from-emerald-500/20 via-teal-500/20 to-emerald-500/20",
-}
-
-const serviceAccents = {
-  protetike: "group-hover:shadow-amber-500/20",
-  terapi: "group-hover:shadow-blue-500/20",
-  kirurgji: "group-hover:shadow-red-500/20",
-  estetike: "group-hover:shadow-pink-500/20",
-  ortodonci: "group-hover:shadow-emerald-500/20",
 }
 
 export default function ServicesOverview() {
@@ -73,8 +64,6 @@ export default function ServicesOverview() {
       <div className="max-w-7xl mx-auto relative">
         {/* Section Header */}
         <div className="text-center mb-16 space-y-6">
-        
-          
           <h2 className="text-3xl md:text-5xl font-bold gradient-text animate-fade-in-up">
             {t.services.title}
           </h2>
@@ -86,44 +75,42 @@ export default function ServicesOverview() {
           </p>
         </div>
 
-        {/* Services Grid - 5 items in responsive layout */}
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* Services Grid - 2x2 on mobile, 4-col on lg */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-12">
           {services.map((service, index) => {
             const Icon = service.icon
             return (
               <Link
                 key={service.key}
                 to={`/services#${service.key}`}
-            className="group relative card-glass card-hover overflow-hidden animate-fade-in-up"
+                className="group relative card-glass card-hover overflow-hidden animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Gradient Background */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${serviceColors[service.key as keyof typeof serviceColors]} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                 
                 {/* Content */}
-                <div className="relative p-6 space-y-4">
+                <div className="relative p-4 md:p-6 space-y-3 md:space-y-4">
                   {/* Icon Container */}
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                      <Icon className="text-white" size={28} />
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                      <Icon className="text-white" size={22} />
                     </div>
-                    
-                    {/* Decorative Ring */}
-                    <div className="absolute inset-0 w-16 h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
+                    <div className="absolute inset-0 w-12 h-12 md:w-16 md:h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
+                  <h3 className="text-sm md:text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
                     {service.name}
                   </h3>
 
-                  {/* Description */}
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 group-hover:text-foreground/80 transition-colors duration-300">
+                  {/* Description — hidden on mobile to keep cards compact */}
+                  <p className="hidden md:block text-sm text-muted-foreground leading-relaxed line-clamp-3 group-hover:text-foreground/80 transition-colors duration-300">
                     {service.desc}
                   </p>
 
                   {/* Arrow Icon */}
-                  <div className="flex items-center gap-2 text-accent opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300">
+                  <div className="hidden md:flex items-center gap-2 text-accent opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300">
                     <span className="text-sm font-medium">
                       {language === "sq" ? "Mëso më shumë" : "Learn more"}
                     </span>

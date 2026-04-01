@@ -82,7 +82,8 @@ export default function Contact() {
                 </p>
               </div>
               
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[650px] lg:h-[777px] glass-strong">
+              {/* Map height: small on mobile, grows on larger screens */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[280px] sm:h-[400px] lg:h-[777px] glass-strong">
                 {/* Map Border Glow */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-20 blur-xl" />
                 
