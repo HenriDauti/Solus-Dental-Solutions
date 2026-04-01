@@ -41,6 +41,7 @@ export const servicesData = {
       image: "orthodontics",
     },
   ],
+
   en: [
     {
       id: "terapi",
@@ -83,4 +84,47 @@ export const servicesData = {
       image: "orthodontics",
     },
   ],
-}
+
+  it: [
+    {
+      id: "terapi",
+      name: "Terapia Dentale",
+      title: "Terapia Dentale",
+      description:
+        "Presso Solus Dental Solution offriamo terapia dentale avanzata per il trattamento e la prevenzione dei problemi dentali.",
+      details:
+        "I nostri servizi includono il trattamento delle carie, otturazioni estetiche e terapia endodontica (devitalizzazione), utilizzando tecnologie moderne e materiali di qualità. Il nostro obiettivo è preservare i denti naturali e ripristinare la funzionalità e l'estetica del tuo sorriso.",
+      image: "dental-therapy",
+    },
+    {
+      id: "kirurgji",
+      name: "Implantologia e Chirurgia Orale",
+      title: "Implantologia e Chirurgia Orale",
+      description:
+        "Presso Solus Dental Solution offriamo trattamenti avanzati in implantologia e chirurgia orale, focalizzati sul ripristino della funzione, dell'estetica e della salute orale.",
+      details:
+        "L'implantologia è la soluzione più moderna per sostituire i denti mancanti, utilizzando impianti dentali che si integrano naturalmente con l'osso (osteointegrazione), per un risultato stabile e duraturo. Utilizziamo sistemi implantari certificati e tecniche contemporanee per risultati sicuri ed estetici. La chirurgia orale comprende procedure specializzate come estrazioni semplici e chirurgiche, rimozione di denti inclusi, trattamento delle infezioni e procedure per la preparazione ossea per gli impianti. Il nostro obiettivo è fornire soluzioni personalizzate e risultati duraturi, utilizzando le più recenti tecnologie.",
+      image: "dental-surgery",
+    },
+    {
+      id: "estetike",
+      name: "Estetica e Protesi Dentale",
+      title: "Estetica e Protesi Dentale",
+      description:
+        "Presso Solus Dental Solution offriamo trattamenti avanzati di estetica e protesi dentale, focalizzati sul ripristino della funzionalità e sulla creazione di un sorriso perfetto e naturale.",
+      details:
+        "L'estetica dentale include procedure come lo sbiancamento professionale, le faccette (veneers) e i restauri estetici, che migliorano il colore, la forma e l'armonia dei denti. La protesi dentale si occupa della sostituzione e ricostruzione di denti danneggiati o mancanti tramite corone, ponti e restauri su impianti. Ogni trattamento viene pianificato in modo personalizzato, combinando estetica e funzionalità. Utilizziamo materiali premium e tecnologie moderne per garantire qualità e sorrisi duraturi nel tempo.",
+      image: "cosmetic-dentistry",
+    },
+    {
+      id: "ortodonci",
+      name: "Ortodonzia e Allineatori Trasparenti",
+      title: "Ortodonzia e Allineatori Trasparenti",
+      description:
+        "Presso Solus Dental Solution offriamo moderni trattamenti ortodontici per il raddrizzamento dei denti, migliorando sia la funzionalità che l'estetica del sorriso.",
+      details:
+        "L'ortodonzia si occupa della correzione della posizione dei denti e delle mascelle attraverso apparecchi fissi (brackets) e metodi avanzati, garantendo una mordente regolare e un sorriso bilanciato. Gli allineatori trasparenti sono quasi invisibili, rimovibili e personalizzati per ogni paziente, consentendo un trattamento discreto e confortevole nella vita quotidiana. Il nostro obiettivo è ottenere risultati precisi e duraturi, utilizzando tecnologie moderne e piani di trattamento personalizzati.",
+      image: "orthodontics",
+    },
+  ],
+};

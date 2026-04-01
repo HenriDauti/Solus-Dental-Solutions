@@ -12,20 +12,18 @@ export default function WhyChooseUs() {
 
   return (
     <section className="relative py-20 md:py-32 px-4 overflow-hidden">
-      {/* Sophisticated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-muted/50" />
-      
-      {/* Ambient Lighting Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-delayed" />
       </div>
-
-      {/* Decorative Grid Pattern */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }} />
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
+          backgroundSize: "40px 40px",
+        }}
+      />
 
       <div className="max-w-7xl mx-auto relative">
         {/* Section Header */}
@@ -33,62 +31,41 @@ export default function WhyChooseUs() {
           <h2 className="text-3xl md:text-5xl font-bold">
             <span className="gradient-text">{t.whyChooseUs.title}</span>
           </h2>
-          
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {language === "sq"
-              ? "Përkushtimi ynë ndaj përsosmërisë dhe kujdesit të personalizuar na bën zgjedhjen ideale për shëndetin tuaj dentar"
-              : "Our commitment to excellence and personalized care makes us the ideal choice for your dental health"}
+            {t.whyChooseUs.subtitle}
           </p>
         </div>
 
-        {/* Benefits Grid — 2x2 on mobile, 4-col on lg */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+        {/* Benefits Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {t.whyChooseUs.items.map((item, index) => {
             const Icon = benefitIcons[index] || Check
-            
             return (
               <div
                 key={index}
                 className="group relative animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                {/* Card */}
-                <div className="relative h-full card-glass p-5 md:p-8 card-hover overflow-hidden">
-                  {/* Gradient Overlay on Hover */}
+                <div className="relative h-full card-glass p-8 card-hover overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Content */}
-                  <div className="relative space-y-3 md:space-y-4">
-                    {/* Icon Container */}
+                  <div className="relative space-y-4">
                     <div className="relative inline-block">
-                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                        <Icon className="text-white" size={22} />
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                        <Icon className="text-white" size={28} />
                       </div>
-                      
-                      {/* Check Badge */}
-                      <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-white shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Check className="text-accent" size={11} strokeWidth={3} />
+                      <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Check className="text-accent" size={14} strokeWidth={3} />
                       </div>
-                      
-                      {/* Decorative Ring */}
-                      <div className="absolute inset-0 w-12 h-12 md:w-16 md:h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
+                      <div className="absolute inset-0 w-16 h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
                     </div>
-
-                    {/* Title */}
-                    <h3 className="text-sm md:text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
+                    <h3 className="text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
                       {item.title}
                     </h3>
-
-                    {/* Description */}
-                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors duration-300">
+                    <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors duration-300">
                       {item.desc}
                     </p>
                   </div>
-
-                  {/* Shine Effect */}
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 ease-in-out" />
-                  
-                  {/* Corner Accent */}
                   <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-accent/10 to-transparent rounded-tl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
               </div>
@@ -109,17 +86,16 @@ export default function WhyChooseUs() {
             </div>
             <div className="text-left">
               <p className="text-sm font-semibold text-foreground">
-                {language === "sq" ? "Mbi 5,000 Pacientë të Kënaqur" : "Over 5,000 Happy Patients"}
+                {t.whyChooseUs.stats.patients}
               </p>
               <p className="text-xs text-muted-foreground">
-                {language === "sq" ? "Bashkohu me familjen tonë sot" : "Join our family today"}
+                {t.whyChooseUs.stats.join}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Decorative Elements */}
       <div className="absolute top-20 left-10 w-20 h-20 border-2 border-primary/10 rounded-full animate-float" />
       <div className="absolute bottom-20 right-10 w-16 h-16 border-2 border-accent/10 rotate-45 animate-float-delayed" />
     </section>

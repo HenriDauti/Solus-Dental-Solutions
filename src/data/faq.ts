@@ -1,5 +1,5 @@
 export const faqData = {
- sq: [
+  sq: [
     {
       category: "E përgjithshme",
       questions: [
@@ -17,7 +17,7 @@ export const faqData = {
         },
         {
           q: "A pranoni raste emergjence?",
-          a: "Po, ne pranojmë raste emergjence. Nëse keni një urgjencë dentare, kontaktojeni amin sa më shpejt që të jetë e mundur në +355 69 770 7078 ose përmes WhatsApp-it.",
+          a: "Po, ne pranojmë raste emergjence. Nëse keni një urgjencë dentare, kontaktojene amin sa më shpejt që të jetë e mundur në +355 69 770 7078 ose përmes WhatsApp-it.",
         },
       ],
     },
@@ -55,7 +55,7 @@ export const faqData = {
         },
         {
           q: "A pranoni sigurime shëndetësore?",
-          a: "Po, ne punojmë me shumë kompani sigurimesh shëndetësore. Ju lutem kontaktojeni amin për të verifikuar nëse sigurimi juaj është i përfshirë.",
+          a: "Po, ne punojmë me shumë kompani sigurimesh shëndetësore. Ju lutem kontaktojene amin për të verifikuar nëse sigurimi juaj është i përfshirë.",
         },
       ],
     },
@@ -77,6 +77,7 @@ export const faqData = {
       ],
     },
   ],
+
   en: [
     {
       category: "General",
@@ -155,4 +156,83 @@ export const faqData = {
       ],
     },
   ],
-}
+
+  it: [
+    {
+      category: "Generale",
+      questions: [
+        {
+          q: "Dove si trova il vostro studio?",
+          a: "Solus Dental Solution si trova in Via Ramazan Kasa, Tirana. Puoi visitarci a questo indirizzo o chiamarci per ulteriori informazioni.",
+        },
+        {
+          q: "Quali sono gli orari di apertura?",
+          a: "Siamo aperti dal lunedì al venerdì dalle 9:00 alle 19:00 e il sabato dalle 9:00 alle 16:00. La domenica siamo chiusi. Puoi prenotare un appuntamento durante questi orari.",
+        },
+        {
+          q: "Come posso prenotare un appuntamento?",
+          a: "Puoi prenotare un appuntamento tramite il nostro portale online, chiamandoci al +355 69 770 7078 o contattandoci via WhatsApp. Siamo pronti ad aiutarti a scegliere l'orario più adatto alle tue esigenze.",
+        },
+        {
+          q: "Accettate urgenze dentali?",
+          a: "Sì, accettiamo casi di urgenza. Se hai un'emergenza dentale, contattaci il prima possibile al +355 69 770 7078 o via WhatsApp.",
+        },
+      ],
+    },
+    {
+      category: "Servizi",
+      questions: [
+        {
+          q: "Quanto dura una seduta di terapia dentale?",
+          a: "La durata della terapia dentale dipende dal tipo di trattamento. Di solito un'otturazione richiede 30-45 minuti, mentre una devitalizzazione può richiedere 1-2 ore. Ti informeremo sulla durata esatta durante la consulenza.",
+        },
+        {
+          q: "Gli impianti dentali fanno male?",
+          a: "No, la procedura di posizionamento degli impianti viene eseguita in anestesia locale, quindi non sentirai dolore durante l'intervento. Dopo l'intervento potrebbe esserci un leggero fastidio, che di solito scompare entro pochi giorni.",
+        },
+        {
+          q: "Cosa include una visita di controllo?",
+          a: "Una visita di controllo include l'esame dei denti, il controllo osseo, la rimozione del tartaro se necessario e, se opportuno, la radiografia. Possiamo anche fornirti utili consigli per l'igiene orale.",
+        },
+        {
+          q: "Quanto dura un trattamento ortodontico?",
+          a: "Il trattamento ortodontico dura generalmente 18-24 mesi, a seconda delle condizioni iniziali dei denti. I progressi si notano entro pochi mesi.",
+        },
+      ],
+    },
+    {
+      category: "Appuntamenti e Pagamenti",
+      questions: [
+        {
+          q: "Si aspetta molto per un appuntamento?",
+          a: "Di solito i tempi di attesa sono minimi. Cerchiamo di iniziare gli appuntamenti all'orario stabilito. In caso di ritardi, sarai avvisato in anticipo.",
+        },
+        {
+          q: "Quali metodi di pagamento accettate?",
+          a: "Accettiamo pagamenti in contanti, carte di credito/debito e bonifici bancari. Possiamo offrirti piani di finanziamento per trattamenti più importanti.",
+        },
+        {
+          q: "Accettate assicurazioni sanitarie?",
+          a: "Sì, collaboriamo con molte compagnie di assicurazione sanitaria. Ti preghiamo di contattarci per verificare se la tua assicurazione è inclusa.",
+        },
+      ],
+    },
+    {
+      category: "Cure Post-Trattamento",
+      questions: [
+        {
+          q: "Come devo prendermi cura degli impianti dentali?",
+          a: "Gli impianti vanno curati come i denti naturali. Spazzolali due volte al giorno, usa il filo interdentale e visita lo studio per controlli di routine ogni 6 mesi.",
+        },
+        {
+          q: "Quanto durano gli impianti?",
+          a: "Con le dovute cure, gli impianti possono durare 15-20 anni o anche di più. I controlli periodici e una buona igiene orale sono fondamentali per prolungarne la durata.",
+        },
+        {
+          q: "Ci sono limitazioni dopo il posizionamento degli impianti?",
+          a: "Dopo il posizionamento degli impianti, consigliamo di evitare cibi duri e caldi per alcuni giorni. Dopo l'integrazione non ci sono limitazioni specifiche e potrai mangiare normalmente.",
+        },
+      ],
+    },
+  ],
+};

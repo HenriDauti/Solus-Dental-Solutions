@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import type { Language } from '@/context/LanguageContext';
 import { Link, useLocation } from 'react-router-dom';
+
+const LANGUAGES: { code: Language; label: string; full: string }[] = [
+  { code: 'sq', label: 'AL', full: 'Shqip' },
+  { code: 'en', label: 'EN', full: 'English' },
+  { code: 'it', label: 'IT', full: 'Italiano' },
+];
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,13 +39,8 @@ const Navbar: React.FC = () => {
       {/* Floating Navbar */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'glass-strong py-3 shadow-xl'
-            : 'glass py-4 shadow-sm'
+          isScrolled ? 'glass-strong py-3 shadow-xl' : 'glass py-4 shadow-sm'
         }`}
-        style={{
-          transform: isScrolled ? 'translateY(0)' : 'translateY(0)',
-        }}
       >
         <div className="container-custom">
           <div className="flex items-center justify-between">
@@ -71,13 +73,10 @@ const Navbar: React.FC = () => {
                   >
                     {item.name}
                   </span>
-                  
                   {/* Gradient Underline */}
                   <span
                     className={`absolute bottom-0 left-0 h-0.5 gradient-blue-purple transition-all duration-300 ${
-                      isActive(item.href)
-                        ? 'w-full'
-                        : 'w-0 group-hover:w-full'
+                      isActive(item.href) ? 'w-full' : 'w-0 group-hover:w-full'
                     }`}
                   />
                 </Link>
@@ -85,29 +84,22 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex items-center gap-4">
-              {/* Language Switcher with Pill Design */}
-              <div className="hidden md:flex items-center gap-1 p-1 rounded-full glass-strong">
-                <button
-                  onClick={() => setLanguage('sq')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    language === 'sq'
-                      ? 'gradient-blue-purple text-white shadow-md'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  AL
-                </button>
-                <button
-                  onClick={() => setLanguage('en')}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    language === 'en'
-                      ? 'gradient-blue-purple text-white shadow-md'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  EN
-                </button>
+            <div className="flex items-center gap-3">
+              {/* Language Switcher — 3 pills */}
+              <div className="hidden md:flex items-center gap-0.5 p-1 rounded-full glass-strong">
+                {LANGUAGES.map(({ code, label }) => (
+                  <button
+                    key={code}
+                    onClick={() => setLanguage(code)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                      language === code
+                        ? 'gradient-blue-purple text-white shadow-md'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
 
               {/* Book Now Button */}
@@ -140,9 +132,7 @@ const Navbar: React.FC = () => {
       {/* Mobile Menu Overlay */}
       <div
         className={`fixed inset-0 z-40 lg:hidden transition-all duration-500 ${
-          isOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
       >
         {/* Backdrop */}
@@ -173,34 +163,24 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
 
-            {/* Mobile Language Switcher */}
+            {/* Mobile Language Switcher — 3 buttons */}
             <div className="flex items-center gap-2 pt-4 border-t border-border">
-              <button
-                onClick={() => {
-                  setLanguage('sq');
-                  setIsOpen(false);
-                }}
-                className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  language === 'sq'
-                    ? 'gradient-blue-purple text-white shadow-md'
-                    : 'bg-muted text-muted-foreground hover:bg-accent/10'
-                }`}
-              >
-                Shqip
-              </button>
-              <button
-                onClick={() => {
-                  setLanguage('en');
-                  setIsOpen(false);
-                }}
-                className={`flex-1 py-3 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  language === 'en'
-                    ? 'gradient-blue-purple text-white shadow-md'
-                    : 'bg-muted text-muted-foreground hover:bg-accent/10'
-                }`}
-              >
-                English
-              </button>
+              {LANGUAGES.map(({ code, full }) => (
+                <button
+                  key={code}
+                  onClick={() => {
+                    setLanguage(code);
+                    setIsOpen(false);
+                  }}
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                    language === code
+                      ? 'gradient-blue-purple text-white shadow-md'
+                      : 'bg-muted text-muted-foreground hover:bg-accent/10'
+                  }`}
+                >
+                  {full}
+                </button>
+              ))}
             </div>
 
             {/* Mobile Book Now */}

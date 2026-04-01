@@ -18,12 +18,10 @@ export default function FAQ() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4 animate-slideUp">
-            {language === "sq" ? "Pyetje të Shpeshta" : "Frequently Asked Questions"}
+            {t.pages.faq.title}
           </h1>
           <p className="text-lg text-foreground opacity-75">
-            {language === "sq"
-              ? "Gjeni përgjigje për pyetjet më të shpeshta"
-              : "Find answers to your most common questions"}
+            {t.pages.faq.subtitle}
           </p>
         </div>
 
@@ -52,18 +50,16 @@ export default function FAQ() {
         {/* CTA Section */}
         <div className="mt-16 p-8 bg-muted rounded-xl text-center">
           <h2 className="text-2xl font-bold text-primary mb-4">
-            {language === "sq" ? "Ende nuk e gjetët përgjigjen?" : "Still have questions?"}
+            {t.pages.faq.noAnswer}
           </h2>
           <p className="text-foreground opacity-75 mb-6">
-            {language === "sq"
-              ? "Kontaktoni amin në +355 69 770 7078 ose përdorni formën e kontaktit"
-              : "Contact us at +355 69 770 7078 or use the contact form"}
+            {t.pages.faq.noAnswerDesc}
           </p>
           <a
             href="/contact"
             className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105"
           >
-            {language === "sq" ? "Kontakto Tani" : "Contact Now"}
+            {t.pages.faq.contactNow}
           </a>
         </div>
       </div>

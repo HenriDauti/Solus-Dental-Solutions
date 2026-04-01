@@ -21,6 +21,7 @@ const APIFY_TOKEN = (import.meta as any).env.VITE_APIFY_TOKEN as string
 const DATASET_IDS: Record<string, string> = {
   en: (import.meta as any).env.VITE_APIFY_DATASET_ID_EN as string,
   sq: (import.meta as any).env.VITE_APIFY_DATASET_ID_SQ as string,
+  it: (import.meta as any).env.VITE_APIFY_DATASET_ID_EN as string, // falls back to EN dataset for Italian
 }
 
 const MAPS_URL =
@@ -29,9 +30,10 @@ const MAPS_URL =
 const CACHE_KEY_PREFIX  = "solus_reviews_v6_"
 const CACHE_TTL         = 24 * 60 * 60 * 1000
 const BG_REFRESH_AFTER  = 6  * 60 * 60 * 1000
+const CARDS_PER_PAGE    = 3
 const AUTOPLAY_MS       = 5000
 
-// ─── UI strings ───────────────────────────────────────────────────────────────
+// ─── UI strings (AL / EN / IT) ────────────────────────────────────────────────
 const UI: Record<string, Record<string, any>> = {
   en: {
     heading:    "What Our Patients Say",
@@ -57,9 +59,21 @@ const UI: Record<string, Record<string, any>> = {
     great:      "Vlerësim i mirë",
     counter:    (page: number, total: number, count: number) => `${page} / ${total} faqe · ${count} vlerësime`,
   },
+  it: {
+    heading:    "Cosa Dicono i Nostri Pazienti",
+    subheading: "Leggi le esperienze dei pazienti che ci hanno affidato il loro sorriso",
+    loading:    "Caricamento recensioni…",
+    refreshing: "Aggiornamento recensioni…",
+    error:      "Impossibile caricare le recensioni.",
+    retry:      "Riprova",
+    viewAll:    "Vedi tutte su Google",
+    excellent:  "Valutazione eccellente",
+    great:      "Buona valutazione",
+    counter:    (page: number, total: number, count: number) => `${page} / ${total} · ${count} recensioni`,
+  },
 }
 
-function t(lang: string, key: string, ...args: any[]): string {
+function uiT(lang: string, key: string, ...args: any[]): string {
   const entry = UI[lang]?.[key] ?? UI["en"][key]
   return typeof entry === "function" ? entry(...args) : entry
 }
@@ -88,6 +102,12 @@ function timeAgo(dateStr: string | undefined, lang: string): string {
     if (months > 0) return `${months} muaj më parë`
     if (days   > 0) return `${days} ditë më parë`
     return "Sot"
+  }
+  if (lang === "it") {
+    if (years  > 0) return `${years} ann${years > 1 ? "i" : "o"} fa`
+    if (months > 0) return `${months} mes${months > 1 ? "i" : "e"} fa`
+    if (days   > 0) return `${days} giorn${days > 1 ? "i" : "o"} fa`
+    return "Oggi"
   }
   if (years  > 0) return `${years} year${years > 1 ? "s" : ""} ago`
   if (months > 0) return `${months} month${months > 1 ? "s" : ""} ago`
@@ -163,7 +183,7 @@ function ReviewCard({ review, index, lang }: { review: ApifyReview; index: numbe
         </>
       ) : (
         <p className="text-xs text-muted-foreground mt-2 mb-2">
-          {stars === 5 ? t(lang, "excellent") : t(lang, "great")}
+          {stars === 5 ? uiT(lang, "excellent") : uiT(lang, "great")}
         </p>
       )}
 
@@ -176,21 +196,13 @@ function ReviewCard({ review, index, lang }: { review: ApifyReview; index: numbe
   )
 }
 
-// ─── Responsive cards-per-page helper ─────────────────────────────────────────
-function getCardsPerPage(): number {
-  if (typeof window === "undefined") return 3
-  if (window.innerWidth < 768) return 1
-  if (window.innerWidth < 1024) return 2
-  return 3
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function GoogleReviews() {
   const { language } = useLanguage()
 
-  const [reviewsByLang, setReviewsByLang] = useState<Record<string, ApifyReview[]>>({ en: [], sq: [] })
-  const [loadingLangs,  setLoadingLangs]  = useState<Record<string, boolean>>({ en: true, sq: true })
-  const [errorLangs,    setErrorLangs]    = useState<Record<string, string | null>>({ en: null, sq: null })
+  const [reviewsByLang, setReviewsByLang] = useState<Record<string, ApifyReview[]>>({ en: [], sq: [], it: [] })
+  const [loadingLangs,  setLoadingLangs]  = useState<Record<string, boolean>>({ en: true, sq: true, it: true })
+  const [errorLangs,    setErrorLangs]    = useState<Record<string, string | null>>({ en: null, sq: null, it: null })
   const [isRefreshing,  setIsRefreshing]  = useState(false)
 
   const [pageIndex, setPageIndex] = useState(0)
@@ -198,33 +210,13 @@ export default function GoogleReviews() {
   const [progress,  setProgress]  = useState(0)
   const [animKey,   setAnimKey]   = useState(0)
 
-  // ─── Responsive cards per page ──────────────────────────────────────────────
-  const [cardsPerPage, setCardsPerPage] = useState(getCardsPerPage)
-
-  useEffect(() => {
-    const handleResize = () => {
-      const next = getCardsPerPage()
-      setCardsPerPage((prev) => {
-        if (prev !== next) {
-          setPageIndex(0)
-          setProgress(0)
-          setAnimKey((k) => k + 1)
-        }
-        return next
-      })
-    }
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
-
   const bgRefreshRef = useRef<Record<string, AbortController>>({})
 
   const reviews    = reviewsByLang[language] ?? []
   const loading    = loadingLangs[language]  ?? true
   const error      = errorLangs[language]    ?? null
-  const totalPages = Math.ceil(reviews.length / cardsPerPage)
+  const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE)
 
-  // ─── Fast path: read pre-stored dataset ───────────────────────────────────
   const fetchFromDataset = useCallback(async (lang: string): Promise<ApifyReview[]> => {
     const datasetId = DATASET_IDS[lang]
     if (!datasetId) throw new Error(`No dataset ID configured for language: ${lang}`)
@@ -238,7 +230,6 @@ export default function GoogleReviews() {
     return processReviews(raw)
   }, [])
 
-  // ─── Slow path: live scraper run ──────────────────────────────────────────
   const triggerFreshRun = useCallback(async (lang: string, signal: AbortSignal): Promise<ApifyReview[]> => {
     const res = await fetch(
       `https://api.apify.com/v2/acts/compass~google-maps-reviews-scraper/run-sync-get-dataset-items?token=${APIFY_TOKEN}&timeout=90`,
@@ -250,7 +241,7 @@ export default function GoogleReviews() {
           startUrls: [{ url: MAPS_URL }],
           maxReviews: 30,
           reviewsSort: "newest",
-          language: lang,
+          language: lang === "it" ? "en" : lang, // fallback to EN for Italian
         }),
       }
     )
@@ -266,7 +257,6 @@ export default function GoogleReviews() {
     bgRefreshRef.current[lang]?.abort()
     const controller = new AbortController()
     bgRefreshRef.current[lang] = controller
-
     setIsRefreshing(true)
     triggerFreshRun(lang, controller.signal)
       .then((result) => {
@@ -298,9 +288,11 @@ export default function GoogleReviews() {
       } catch {}
     }
 
-    if (DATASET_IDS[lang]) {
+    // For Italian, share the EN dataset
+    const datasetLang = lang === "it" ? "en" : lang
+    if (DATASET_IDS[datasetLang]) {
       try {
-        const result = await fetchFromDataset(lang)
+        const result = await fetchFromDataset(datasetLang)
         localStorage.setItem(cacheKey, JSON.stringify({ reviews: result, ts: Date.now() }))
         setReviewsByLang((prev) => ({ ...prev, [lang]: result }))
         setLoadingLangs((prev)  => ({ ...prev, [lang]: false }))
@@ -308,7 +300,7 @@ export default function GoogleReviews() {
         scheduleBackgroundRefresh(lang, cacheKey)
         return
       } catch (err) {
-        console.warn(`Dataset fast-path (${lang}) failed, falling back to scraper:`, err)
+        console.warn(`Dataset fast-path (${lang}) failed:`, err)
       }
     }
 
@@ -332,6 +324,7 @@ export default function GoogleReviews() {
   useEffect(() => {
     loadLanguage("en")
     loadLanguage("sq")
+    loadLanguage("it")
     return () => { Object.values(bgRefreshRef.current).forEach((c) => c.abort()) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -342,12 +335,10 @@ export default function GoogleReviews() {
     setAnimKey((k) => k + 1)
   }, [language])
 
-  // ─── Navigation ────────────────────────────────────────────────────────────
   const goTo       = useCallback((page: number) => { setPageIndex(page); setProgress(0); setAnimKey((k) => k + 1) }, [])
   const handleNext = useCallback(() => goTo((pageIndex + 1) % totalPages), [pageIndex, totalPages, goTo])
   const handlePrev = useCallback(() => goTo((pageIndex - 1 + totalPages) % totalPages), [pageIndex, totalPages, goTo])
 
-  // ─── Autoplay ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (isPaused || reviews.length === 0 || totalPages <= 1) return
     const interval = setInterval(() => {
@@ -359,14 +350,8 @@ export default function GoogleReviews() {
     return () => clearInterval(interval)
   }, [isPaused, reviews.length, totalPages, handleNext])
 
-  // ─── Slice ─────────────────────────────────────────────────────────────────
-  const startIdx       = pageIndex * cardsPerPage
-  const visibleReviews = reviews.slice(startIdx, startIdx + cardsPerPage)
-
-  // Grid class responds to cardsPerPage
-  const gridClass = cardsPerPage === 1
-    ? "grid grid-cols-1 gap-6"
-    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+  const startIdx       = pageIndex * CARDS_PER_PAGE
+  const visibleReviews = reviews.slice(startIdx, startIdx + CARDS_PER_PAGE)
 
   return (
     <section className="section relative overflow-hidden">
@@ -378,111 +363,94 @@ export default function GoogleReviews() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="gradient-text">{t(language, "heading")}</span>
+            <span className="gradient-text">{uiT(language, "heading")}</span>
           </h2>
           <p className="text-lg text-muted-foreground flex items-center justify-center gap-2">
-            {t(language, "subheading")}
+            {uiT(language, "subheading")}
             {isRefreshing && (
-              <span title={t(language, "refreshing")}>
+              <span title={uiT(language, "refreshing")}>
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground/50 inline" />
               </span>
             )}
           </p>
         </div>
 
-        {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="w-14 h-14 rounded-full border-4 border-primary/20 border-t-accent animate-spin" />
-            <p className="text-muted-foreground text-sm">{t(language, "loading")}</p>
+            <p className="text-muted-foreground text-sm">{uiT(language, "loading")}</p>
           </div>
         )}
 
-        {/* Error */}
         {error && !loading && (
           <div className="flex flex-col items-center gap-3 py-16">
-            <p className="text-muted-foreground text-sm">{t(language, "error")}</p>
+            <p className="text-muted-foreground text-sm">{uiT(language, "error")}</p>
             <button
               onClick={() => loadLanguage(language, true)}
               className="flex items-center gap-2 text-sm text-accent hover:underline"
             >
               <RefreshCw className="w-4 h-4" />
-              {t(language, "retry")}
+              {uiT(language, "retry")}
             </button>
           </div>
         )}
 
-        {/* Carousel */}
         {!loading && !error && reviews.length > 0 && (
           <div
             className="relative"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div key={animKey} className={`${gridClass} animate-fade-in-up`}>
+            <div key={animKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
               {visibleReviews.map((review, i) => (
                 <ReviewCard key={startIdx + i} review={review} index={startIdx + i} lang={language} />
               ))}
             </div>
 
-          {/* Navigation */}
-<div className="mt-10 flex items-center justify-center gap-4">
-  <button
-    onClick={handlePrev}
-    disabled={totalPages <= 1}
-    aria-label="Previous"
-    className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40 flex-shrink-0"
-  >
-    <ChevronLeft className="w-5 h-5 text-accent group-hover:-translate-x-0.5 transition-transform duration-200" />
-  </button>
+            <div className="mt-10 flex items-center justify-center gap-6">
+              <button
+                onClick={handlePrev}
+                disabled={totalPages <= 1}
+                aria-label="Previous"
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
+              >
+                <ChevronLeft className="w-5 h-5 text-accent group-hover:-translate-x-0.5 transition-transform duration-200" />
+              </button>
 
-  <div className="flex items-center gap-2 overflow-hidden max-w-[160px] justify-center flex-shrink">
-    {Array.from({ length: totalPages }, (_, i) => {
-      // Only render dots near the current page to avoid overflow
-      const range = 2
-      const withinRange =
-        i === 0 ||
-        i === totalPages - 1 ||
-        Math.abs(i - pageIndex) <= range
-      if (!withinRange) return null
-      return (
-        <button
-          key={i}
-          onClick={() => goTo(i)}
-          aria-label={`Page ${i + 1}`}
-          className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300 flex-shrink-0"
-          style={{
-            width: i === pageIndex ? 32 : 8,
-            background: i === pageIndex ? "transparent" : "hsl(var(--border))",
-          }}
-        >
-          {i === pageIndex && (
-            <div className="absolute inset-0 gradient-blue-purple rounded-full">
-              <div
-                className="absolute inset-0 bg-white/30 rounded-full transition-none"
-                style={{ width: `${100 - progress}%`, right: 0, left: "auto" }}
-              />
+              <div className="flex items-center gap-2">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goTo(i)}
+                    aria-label={`Page ${i + 1}`}
+                    className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
+                    style={{ width: i === pageIndex ? 32 : 8, background: i === pageIndex ? "transparent" : "hsl(var(--border))" }}
+                  >
+                    {i === pageIndex && (
+                      <div className="absolute inset-0 gradient-blue-purple rounded-full">
+                        <div
+                          className="absolute inset-0 bg-white/30 rounded-full transition-none"
+                          style={{ width: `${100 - progress}%`, right: 0, left: "auto" }}
+                        />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={handleNext}
+                disabled={totalPages <= 1}
+                aria-label="Next"
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
+              >
+                <ChevronRight className="w-5 h-5 text-accent group-hover:translate-x-0.5 transition-transform duration-200" />
+              </button>
             </div>
-          )}
-        </button>
-      )
-    })}
-  </div>
 
-  <button
-    onClick={handleNext}
-    disabled={totalPages <= 1}
-    aria-label="Next"
-    className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40 flex-shrink-0"
-  >
-    <ChevronRight className="w-5 h-5 text-accent group-hover:translate-x-0.5 transition-transform duration-200" />
-  </button>
-</div>
-
-            {/* Counter + view all */}
             <div className="mt-4 flex items-center justify-center gap-4">
               <span className="text-sm text-muted-foreground">
-                {t(language, "counter", pageIndex + 1, totalPages, reviews.length)}
+                {uiT(language, "counter", pageIndex + 1, totalPages, reviews.length)}
               </span>
               <a
                 href={MAPS_URL}
@@ -491,7 +459,7 @@ export default function GoogleReviews() {
                 className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline font-medium"
               >
                 <GoogleLogo />
-                {t(language, "viewAll")}
+                {uiT(language, "viewAll")}
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
