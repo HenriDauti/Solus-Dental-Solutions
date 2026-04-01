@@ -21,7 +21,7 @@ const APIFY_TOKEN = (import.meta as any).env.VITE_APIFY_TOKEN as string
 const DATASET_IDS: Record<string, string> = {
   en: (import.meta as any).env.VITE_APIFY_DATASET_ID_EN as string,
   sq: (import.meta as any).env.VITE_APIFY_DATASET_ID_SQ as string,
-  it: (import.meta as any).env.VITE_APIFY_DATASET_ID_EN as string, // falls back to EN dataset for Italian
+  it: (import.meta as any).env.VITE_APIFY_DATASET_ID_IT as string, 
 }
 
 const MAPS_URL =
@@ -267,7 +267,7 @@ export default function GoogleReviews() {
           startUrls: [{ url: MAPS_URL }],
           maxReviews: 30,
           reviewsSort: "newest",
-          language: lang === "it" ? "en" : lang,
+        language: lang,
         }),
       }
     )
@@ -314,10 +314,9 @@ export default function GoogleReviews() {
       } catch {}
     }
 
-    const datasetLang = lang === "it" ? "en" : lang
-    if (DATASET_IDS[datasetLang]) {
-      try {
-        const result = await fetchFromDataset(datasetLang)
+if (DATASET_IDS[lang]) {
+  try {
+    const result = await fetchFromDataset(lang)
         localStorage.setItem(cacheKey, JSON.stringify({ reviews: result, ts: Date.now() }))
         setReviewsByLang((prev) => ({ ...prev, [lang]: result }))
         setLoadingLangs((prev)  => ({ ...prev, [lang]: false }))
