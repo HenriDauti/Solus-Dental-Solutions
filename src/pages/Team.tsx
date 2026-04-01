@@ -31,19 +31,19 @@ export default function Team() {
               {p.heroText2}
             </p>
 
-            {/* Value pillars */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+            {/* Value pillars — 3-col always, compact on mobile */}
+            <div className="grid grid-cols-3 gap-3 md:gap-8 pt-8">
               {[
-                { icon: Heart, title: p.pillar1Title, desc: p.pillar1Desc },
+                { icon: Heart,      title: p.pillar1Title, desc: p.pillar1Desc },
                 { icon: Microscope, title: p.pillar2Title, desc: p.pillar2Desc },
-                { icon: Shield, title: p.pillar3Title, desc: p.pillar3Desc },
+                { icon: Shield,     title: p.pillar3Title, desc: p.pillar3Desc },
               ].map(({ icon: Icon, title, desc }, i) => (
-                <div key={i} className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                    <Icon className="w-8 h-8 text-white" />
+                <div key={i} className="flex flex-col items-center text-center space-y-2 md:space-y-4">
+                  <div className="w-10 h-10 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                    <Icon className="w-5 h-5 md:w-8 md:h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">{title}</h3>
-                  <p className="text-muted-foreground">{desc}</p>
+                  <h3 className="text-sm md:text-xl font-bold text-foreground leading-tight">{title}</h3>
+                  <p className="hidden md:block text-muted-foreground text-sm">{desc}</p>
                 </div>
               ))}
             </div>
@@ -63,16 +63,17 @@ export default function Team() {
               <p className="text-base text-foreground/75 leading-relaxed">{p.servicesText2}</p>
             </div>
 
-            <div className="space-y-4">
+            {/* Service list — 2x2 on mobile, single-col on lg */}
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 lg:gap-4">
               {p.servicesList.map((service: string, i: number) => (
                 <div
                   key={i}
-                  className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10 hover:border-primary/30 transition-all duration-300"
+                  className="flex items-center gap-3 p-3 md:p-5 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/10 hover:border-primary/30 transition-all duration-300"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
-                    <Star className="w-5 h-5 text-white" />
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0">
+                    <Star className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
-                  <span className="text-base font-semibold text-foreground">{service}</span>
+                  <span className="text-xs md:text-base font-semibold text-foreground leading-tight">{service}</span>
                 </div>
               ))}
             </div>

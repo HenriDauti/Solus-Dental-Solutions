@@ -151,6 +151,14 @@ function GoogleLogo() {
   )
 }
 
+// ─── Responsive cards-per-page helper ─────────────────────────────────────────
+function getCardsPerPage(): number {
+  if (typeof window === "undefined") return 3
+  if (window.innerWidth < 768) return 1
+  if (window.innerWidth < 1024) return 2
+  return 3
+}
+
 function ReviewCard({ review, index, lang }: { review: ApifyReview; index: number; lang: string }) {
   const stars    = getStars(review)
   const text     = getText(review)
@@ -210,12 +218,30 @@ export default function GoogleReviews() {
   const [progress,  setProgress]  = useState(0)
   const [animKey,   setAnimKey]   = useState(0)
 
+  const [cardsPerPage, setCardsPerPage] = useState(getCardsPerPage)
+
+  useEffect(() => {
+    const handleResize = () => {
+      const next = getCardsPerPage()
+      setCardsPerPage((prev) => {
+        if (prev !== next) {
+          setPageIndex(0)
+          setProgress(0)
+          setAnimKey((k) => k + 1)
+        }
+        return next
+      })
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   const bgRefreshRef = useRef<Record<string, AbortController>>({})
 
   const reviews    = reviewsByLang[language] ?? []
   const loading    = loadingLangs[language]  ?? true
   const error      = errorLangs[language]    ?? null
-  const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE)
+  const totalPages = Math.ceil(reviews.length / cardsPerPage)
 
   const fetchFromDataset = useCallback(async (lang: string): Promise<ApifyReview[]> => {
     const datasetId = DATASET_IDS[lang]
@@ -241,7 +267,7 @@ export default function GoogleReviews() {
           startUrls: [{ url: MAPS_URL }],
           maxReviews: 30,
           reviewsSort: "newest",
-          language: lang === "it" ? "en" : lang, // fallback to EN for Italian
+          language: lang === "it" ? "en" : lang,
         }),
       }
     )
@@ -288,7 +314,6 @@ export default function GoogleReviews() {
       } catch {}
     }
 
-    // For Italian, share the EN dataset
     const datasetLang = lang === "it" ? "en" : lang
     if (DATASET_IDS[datasetLang]) {
       try {
@@ -350,8 +375,12 @@ export default function GoogleReviews() {
     return () => clearInterval(interval)
   }, [isPaused, reviews.length, totalPages, handleNext])
 
-  const startIdx       = pageIndex * CARDS_PER_PAGE
-  const visibleReviews = reviews.slice(startIdx, startIdx + CARDS_PER_PAGE)
+  const startIdx       = pageIndex * cardsPerPage
+  const visibleReviews = reviews.slice(startIdx, startIdx + cardsPerPage)
+
+  const gridClass = cardsPerPage === 1
+    ? "grid grid-cols-1 gap-6"
+    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
 
   return (
     <section className="section relative overflow-hidden">
@@ -375,6 +404,7 @@ export default function GoogleReviews() {
           </p>
         </div>
 
+        {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="w-14 h-14 rounded-full border-4 border-primary/20 border-t-accent animate-spin" />
@@ -401,53 +431,66 @@ export default function GoogleReviews() {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div key={animKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
+            <div key={animKey} className={`${gridClass} animate-fade-in-up`}>
               {visibleReviews.map((review, i) => (
                 <ReviewCard key={startIdx + i} review={review} index={startIdx + i} lang={language} />
               ))}
             </div>
 
-            <div className="mt-10 flex items-center justify-center gap-6">
+            {/* Navigation */}
+            <div className="mt-10 flex items-center justify-center gap-4">
               <button
                 onClick={handlePrev}
                 disabled={totalPages <= 1}
                 aria-label="Previous"
-                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40 flex-shrink-0"
               >
                 <ChevronLeft className="w-5 h-5 text-accent group-hover:-translate-x-0.5 transition-transform duration-200" />
               </button>
 
-              <div className="flex items-center gap-2">
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => goTo(i)}
-                    aria-label={`Page ${i + 1}`}
-                    className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300"
-                    style={{ width: i === pageIndex ? 32 : 8, background: i === pageIndex ? "transparent" : "hsl(var(--border))" }}
-                  >
-                    {i === pageIndex && (
-                      <div className="absolute inset-0 gradient-blue-purple rounded-full">
-                        <div
-                          className="absolute inset-0 bg-white/30 rounded-full transition-none"
-                          style={{ width: `${100 - progress}%`, right: 0, left: "auto" }}
-                        />
-                      </div>
-                    )}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2 overflow-hidden max-w-[160px] justify-center flex-shrink">
+                {Array.from({ length: totalPages }, (_, i) => {
+                  const range = 2
+                  const withinRange =
+                    i === 0 ||
+                    i === totalPages - 1 ||
+                    Math.abs(i - pageIndex) <= range
+                  if (!withinRange) return null
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => goTo(i)}
+                      aria-label={`Page ${i + 1}`}
+                      className="relative h-1.5 rounded-full overflow-hidden transition-all duration-300 flex-shrink-0"
+                      style={{
+                        width: i === pageIndex ? 32 : 8,
+                        background: i === pageIndex ? "transparent" : "hsl(var(--border))",
+                      }}
+                    >
+                      {i === pageIndex && (
+                        <div className="absolute inset-0 gradient-blue-purple rounded-full">
+                          <div
+                            className="absolute inset-0 bg-white/30 rounded-full transition-none"
+                            style={{ width: `${100 - progress}%`, right: 0, left: "auto" }}
+                          />
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
 
               <button
                 onClick={handleNext}
                 disabled={totalPages <= 1}
                 aria-label="Next"
-                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40"
+                className="w-11 h-11 rounded-full glass-strong flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 group disabled:opacity-40 flex-shrink-0"
               >
                 <ChevronRight className="w-5 h-5 text-accent group-hover:translate-x-0.5 transition-transform duration-200" />
               </button>
             </div>
 
+            {/* Counter + view all */}
             <div className="mt-4 flex items-center justify-center gap-4">
               <span className="text-sm text-muted-foreground">
                 {uiT(language, "counter", pageIndex + 1, totalPages, reviews.length)}

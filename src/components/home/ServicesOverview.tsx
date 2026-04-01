@@ -52,7 +52,7 @@ export default function ServicesOverview() {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+<div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-12">
           {services.map((service, index) => {
             const Icon = service.icon
             return (
@@ -65,20 +65,20 @@ export default function ServicesOverview() {
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${serviceColors[service.key as keyof typeof serviceColors]} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                 />
-                <div className="relative p-6 space-y-4">
+                <div className="relative p-4 md:p-6 space-y-3 md:space-y-4">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                      <Icon className="text-white" size={28} />
+                   <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                      <Icon className="text-white" size={22} />
                     </div>
-                    <div className="absolute inset-0 w-16 h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
+                    <div className="absolute inset-0 w-12 h-12 md:w-16 md:h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
+                  <h3 className="text-sm md:text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
                     {service.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 group-hover:text-foreground/80 transition-colors duration-300">
+       <p className="hidden md:block text-sm text-muted-foreground leading-relaxed line-clamp-3 group-hover:text-foreground/80 transition-colors duration-300">
                     {service.desc}
                   </p>
-                  <div className="flex items-center gap-2 text-accent opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300">
+<div className="hidden md:flex items-center gap-2 text-accent opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-2 transition-all duration-300">
                     <span className="text-sm font-medium">{t.pages.services.learnMore}</span>
                     <ArrowRight size={16} />
                   </div>

@@ -37,7 +37,7 @@ export default function WhyChooseUs() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {t.whyChooseUs.items.map((item, index) => {
             const Icon = benefitIcons[index] || Check
             return (
@@ -46,22 +46,22 @@ export default function WhyChooseUs() {
                 className="group relative animate-fade-in-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="relative h-full card-glass p-8 card-hover overflow-hidden">
+<div className="relative h-full card-glass p-5 md:p-8 card-hover overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative space-y-4">
+                <div className="relative space-y-3 md:space-y-4">
                     <div className="relative inline-block">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                        <Icon className="text-white" size={28} />
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                        <Icon className="text-white" size={22} />
                       </div>
-                      <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Check className="text-accent" size={14} strokeWidth={3} />
+                      <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-white shadow-md flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Check className="text-accent" size={11} strokeWidth={3} />
                       </div>
-                      <div className="absolute inset-0 w-16 h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
+                      <div className="absolute inset-0 w-12 h-12 md:w-16 md:h-16 rounded-2xl border-2 border-primary/20 group-hover:scale-125 group-hover:border-accent/40 transition-all duration-500" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
+                   <h3 className="text-sm md:text-xl font-bold text-foreground group-hover:gradient-text transition-all duration-300">
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors duration-300">
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors duration-300">
                       {item.desc}
                     </p>
                   </div>

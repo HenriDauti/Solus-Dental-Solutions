@@ -36,7 +36,7 @@ export default function ContactInfo() {
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up">
+    <div className="grid grid-cols-3 gap-2 md:gap-6 animate-fade-in-up">
       {contactItems.map((item, index) => {
         const Icon = item.icon
         const Component = item.link ? "a" : "div"
@@ -47,34 +47,32 @@ export default function ContactInfo() {
             href={item.link || undefined}
             target={item.type === "address" ? "_blank" : undefined}
             rel={item.type === "address" ? "noopener noreferrer" : undefined}
-            className="group relative glass-strong rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
+           className="group relative glass-strong rounded-xl md:rounded-2xl p-3 md:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer overflow-hidden"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
+           <div className="hidden md:block absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-primary/10 to-accent/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />
 
             <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                <Icon className="text-white" size={28} />
+              <div className="w-9 h-9 md:w-16 md:h-16 bg-gradient-to-br from-primary to-accent rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <Icon className="text-white" size={16} />
               </div>
 
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-1 md:mb-2">
+                <p className="text-[9px] md:text-sm font-bold text-muted-foreground uppercase tracking-wider">
                   {item.label}
                 </p>
-                {item.link && (
-                  <ExternalLink className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                )}
+                <ExternalLink className="hidden md:block w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
-              <p className="text-foreground font-bold text-lg mb-2 group-hover:text-primary transition-colors">
+              <p className="text-foreground font-bold text-[10px] leading-tight md:text-lg mb-1 md:mb-2 group-hover:text-primary transition-colors break-words">
                 {item.value}
               </p>
 
-              <p className="text-sm text-muted-foreground">{item.description}</p>
+              <p className="hidden md:block text-sm text-muted-foreground">{item.description}</p>
 
               {item.link && (
-                <div className="mt-4 flex items-center gap-2 text-accent text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="hidden md:flex mt-4 items-center gap-2 text-accent text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   <span>
                     {item.type === "address"
                       ? t.contactInfo.viewOnMap

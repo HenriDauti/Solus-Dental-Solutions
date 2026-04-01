@@ -66,7 +66,7 @@ export default function Contact() {
                 </p>
               </div>
 
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[650px] lg:h-[777px] glass-strong">
+<div className="relative rounded-2xl overflow-hidden shadow-2xl h-[280px] sm:h-[400px] lg:h-[777px] glass-strong">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent opacity-20 blur-xl" />
                 <div className="relative h-full rounded-2xl overflow-hidden border-2 border-border/50">
                   <iframe
