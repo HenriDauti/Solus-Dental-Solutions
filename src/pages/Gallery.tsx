@@ -12,6 +12,8 @@ export default function Gallery() {
   const t = translations[language]
   const [activeTab, setActiveTab] = useState<"clinic" | "results">("clinic")
 
+  const showParaPasSection = false
+
   const clinicImages = galleryImages.slice(0, 6)
   const resultImages = galleryImages.slice(6)
 
@@ -22,12 +24,12 @@ export default function Gallery() {
       icon: Camera,
       description: t.pages.gallery.tabClinicDesc,
     },
-    {
+    ...(showParaPasSection ? [{
       id: "results",
       label: t.pages.gallery.tabResults,
       icon: Sparkles,
       description: t.pages.gallery.tabResultsDesc,
-    },
+    }] : []),
   ]
 
   const whatsappMsg = encodeURIComponent(t.whatsapp.message)
@@ -57,52 +59,54 @@ export default function Gallery() {
       <section className="py-20 px-4">
         <div className="container-custom max-w-7xl">
           {/* Tabs */}
-          <div className="flex flex-row justify-center gap-3 mb-16 animate-fade-in-up">
-            {tabs.map((tab) => {
-              const Icon = tab.icon
-              const isActive = activeTab === tab.id
+          {tabs.length > 1 && (
+            <div className="flex flex-row justify-center gap-3 mb-16 animate-fade-in-up">
+              {tabs.map((tab) => {
+                const Icon = tab.icon
+                const isActive = activeTab === tab.id
 
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "clinic" | "results")}
-                  className={`group relative px-4 py-4 sm:px-8 sm:py-6 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
-                    isActive
-                      ? "bg-gradient-to-br from-primary to-accent text-white shadow-xl scale-105"
-                      : "glass-strong text-foreground hover:scale-105"
-                  }`}
-                >
-                  {!isActive && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  )}
-                  <div className="relative flex items-center gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                        isActive
-                          ? "bg-white/20"
-                          : "bg-gradient-to-br from-primary/20 to-accent/20 group-hover:scale-110"
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div className="text-left">
-                      <div className="text-base font-bold">{tab.label}</div>
-                      <div className={`text-xs font-normal ${isActive ? "text-white/80" : "text-muted-foreground"}`}>
-                        {tab.description}
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as "clinic" | "results")}
+                    className={`group relative px-4 py-4 sm:px-8 sm:py-6 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
+                      isActive
+                        ? "bg-gradient-to-br from-primary to-accent text-white shadow-xl scale-105"
+                        : "glass-strong text-foreground hover:scale-105"
+                    }`}
+                  >
+                    {!isActive && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    )}
+                    <div className="relative flex items-center gap-3">
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                          isActive
+                            ? "bg-white/20"
+                            : "bg-gradient-to-br from-primary/20 to-accent/20 group-hover:scale-110"
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-base font-bold">{tab.label}</div>
+                        <div className={`text-xs font-normal ${isActive ? "text-white/80" : "text-muted-foreground"}`}>
+                          {tab.description}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {isActive && (
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-white rounded-full" />
-                  )}
-                </button>
-              )
-            })}
-          </div>
+                    {isActive && (
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-white rounded-full" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           {/* Gallery Grid */}
           <div className="animate-fade-in-up" style={{ animationDelay: "150ms" }}>
-            <ImageGrid images={activeTab === "clinic" ? clinicImages : resultImages} />
+            <ImageGrid images={activeTab === "clinic" || !showParaPasSection ? clinicImages : resultImages} />
           </div>
         </div>
       </section>

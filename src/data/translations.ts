@@ -179,7 +179,7 @@ export const translations = {
         contactUs: "Na Kontaktoni",
       },
       services: {
-        heroTitle: "Shërbime dentare të plota me teknologjinë më të fundit",
+        heroTitle: "Shërbime dentare me teknologjinë më të fundit",
         heroSubtitle:
           "Ofrojmë një gamë të plotë shërbimesh dentare profesionale për të gjithë familjen",
         ctaTitle: "Gati për të përmirësuar buzëqeshjen tuaj?",
@@ -436,7 +436,7 @@ export const translations = {
         contactUs: "Contact Us",
       },
       services: {
-        heroTitle: "Complete dental services with the latest technology",
+        heroTitle: "Dental services with the latest technology",
         heroSubtitle:
           "We offer a complete range of professional dental services for the whole family",
         ctaTitle: "Ready to improve your smile?",
@@ -691,7 +691,7 @@ export const translations = {
         contactUs: "Contattaci",
       },
       services: {
-        heroTitle: "Servizi dentali completi con le più recenti tecnologie",
+        heroTitle: "Servizi dentali con le più recenti tecnologie",
         heroSubtitle:
           "Offriamo una gamma completa di servizi dentali professionali per tutta la famiglia",
         ctaTitle: "Pronto a migliorare il tuo sorriso?",
